@@ -62,12 +62,14 @@ function toggleBoxConfigurator() {
 
 // Réinitialiser les saveurs
 function resetBoxFlavors() {
+    if (!flavorInputs) return;
     flavorInputs.forEach(input => input.value = 0);
     updateRemainingSlots();
 }
 
 // Calculer les slots restants
 function updateRemainingSlots() {
+    if (!flavorInputs || !remainingSlots) return;
     let total = 0;
     flavorInputs.forEach(input => {
         total += parseInt(input.value) || 0;
@@ -98,13 +100,11 @@ function updateRemainingSlots() {
     return { total, remaining };
 }
 
-// Écouter les changements de quantité
-flavorInputs.forEach(input => {
-    input.addEventListener('input', updateRemainingSlots);
-});
+// Les event listeners pour flavorInputs seront ajoutés dans DOMContentLoaded
 
 // Fonction pour récupérer la composition de la box
 function getBoxComposition() {
+    if (!flavorInputs) return '';
     const composition = [];
     flavorInputs.forEach(input => {
         const qty = parseInt(input.value) || 0;
@@ -199,8 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🔍 Box elements initialized:', {
         boxCheckbox: !!boxCheckbox,
         boxQtyInput: !!boxQtyInput,
-        boxConfigurator: !!boxConfigurator
+        boxConfigurator: !!boxConfigurator,
+        flavorInputs: flavorInputs.length
     });
+    
+    // Ajouter les event listeners pour les flavor inputs
+    if (flavorInputs && flavorInputs.length > 0) {
+        flavorInputs.forEach(input => {
+            input.addEventListener('input', updateRemainingSlots);
+        });
+    }
     
     const checkboxes = document.querySelectorAll('.option-group input[type="checkbox"]');
     const citySelect = document.getElementById('city');
@@ -412,24 +420,20 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         return;
     }
     
-    // MODE TEST : Montant à 0€ pour tester sans payer
-    const depositAmount = 50; // 0.50€ minimum Stripe (50 centimes)
-    
-    // Désactiver le bouton pendant le traitement
+    // MODE TEST : Envoi direct par email sans paiement
     const btn = document.getElementById('stripePaymentBtn');
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '⏳ Préparation du paiement...';
+    btn.innerHTML = '⏳ Envoi de la commande...';
     
     try {
-        // Appel au backend pour créer la session Stripe
-        const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
+        // Appel au backend pour envoyer l'email directement
+        const response = await fetch(`${BACKEND_URL}/send-order-email`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                amount: depositAmount,
                 customerInfo: {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
@@ -449,33 +453,39 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
                     total: formData.total,
                     deposit: formData.deposit,
                     balance: formData.balance
-                },
-                successUrl: window.location.origin + '/success.html',
-                cancelUrl: window.location.origin + '/index.html#commander'
+                }
             })
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Erreur lors de la création de la session');
+            throw new Error(errorData.error || 'Erreur lors de l\'envoi de la commande');
         }
 
-        const { sessionId, url } = await response.json();
+        const result = await response.json();
         
-        console.log('✅ Session créée:', sessionId);
+        console.log('✅ Commande envoyée:', result);
         
-        // Redirection vers Stripe Checkout
-        window.location.href = url;
+        // Afficher message de succès
+        alert('✅ Commande envoyée avec succès !\n\nVous recevrez un email de confirmation à ' + formData.email);
+        
+        // Réinitialiser le formulaire
+        form.reset();
+        updateOrderSummary();
+        
+        // Réactiver le bouton
+        btn.disabled = false;
+        btn.innerHTML = originalText;
         
     } catch (error) {
-        console.error('❌ Erreur paiement:', error);
+        console.error('❌ Erreur envoi commande:', error);
         
         // Réactiver le bouton
         btn.disabled = false;
         btn.innerHTML = originalText;
         
         alert(
-            '❌ Erreur de paiement\n\n' +
+            '❌ Erreur d\'envoi\n\n' +
             error.message + '\n\n' +
             'Vérifiez que le serveur backend est démarré.\n' +
             'Commande: cd backend && npm start'
