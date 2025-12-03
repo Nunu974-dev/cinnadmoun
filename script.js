@@ -69,27 +69,31 @@ function resetBoxFlavors() {
 
 // Calculer les slots restants
 function updateRemainingSlots() {
-    if (!flavorInputs || !remainingSlots) return;
+    if (!flavorInputs || !remainingSlots || !boxQtyInput) return;
+    
+    const boxQty = parseInt(boxQtyInput.value) || 1;
+    const totalSlots = boxQty * 4; // 4 saveurs par box
+    
     let total = 0;
     flavorInputs.forEach(input => {
         total += parseInt(input.value) || 0;
     });
     
-    const remaining = 4 - total;
+    const remaining = totalSlots - total;
     remainingSlots.textContent = remaining;
     
     if (remaining < 0) {
         boxConfigError.style.display = 'block';
-        boxConfigError.textContent = `❌ Trop de saveurs sélectionnées ! Retirez ${Math.abs(remaining)} saveur(s).`;
+        boxConfigError.textContent = `❌ Trop de saveurs sélectionnées ! Vous avez ${boxQty} box(es) = ${totalSlots} places. Retirez ${Math.abs(remaining)} saveur(s).`;
         remainingSlots.style.color = '#ff4444';
     } else if (remaining > 0 && total > 0) {
         boxConfigError.style.display = 'block';
         boxConfigError.style.background = '#fff3cd';
         boxConfigError.style.borderColor = '#ffc107';
         boxConfigError.style.color = '#856404';
-        boxConfigError.textContent = `⚠️ Il reste ${remaining} place(s) dans votre box.`;
+        boxConfigError.textContent = `⚠️ Il reste ${remaining} place(s) dans vos ${boxQty} box(es) (${totalSlots} places au total).`;
         remainingSlots.style.color = '#ffc107';
-    } else if (total === 4) {
+    } else if (total === totalSlots) {
         boxConfigError.style.display = 'none';
         remainingSlots.style.color = '#28a745';
     } else {
@@ -240,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Afficher le configurateur pour la Box Découverte immédiatement
             if (qtyInput.id === 'boxDecouverteQty') {
                 toggleBoxConfigurator();
+                updateRemainingSlots(); // Recalculer le nombre de places
                 console.log('✅ Qty changed, configurator called');
             }
             updateOrderSummary();
@@ -252,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Afficher le configurateur si on change la quantité manuellement
             if (qtyInput.id === 'boxDecouverteQty') {
                 toggleBoxConfigurator();
+                updateRemainingSlots(); // Recalculer le nombre de places
             }
             updateOrderSummary();
         });
