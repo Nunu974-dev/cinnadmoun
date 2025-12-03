@@ -296,10 +296,7 @@ app.post('/send-order-email', async (req, res) => {
                         <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                         
                         <h3>📦 Détails de la commande</h3>
-                        <p><strong>Produits :</strong></p>
-                        <ul>
-                            ${orderDetails.products.map(p => `<li>${p.name} (${p.option}) × ${p.quantity} = ${p.price.toFixed(2)}€</li>`).join('')}
-                        </ul>
+                        <p><strong>Produits :</strong> ${orderDetails.productSummary}</p>
                         <p><strong>Sous-total :</strong> ${orderDetails.subtotal.toFixed(2)}€</p>
                         <p><strong>Frais de livraison :</strong> ${orderDetails.deliveryFee.toFixed(2)}€</p>
                         <p style="font-size: 18px; color: #8B4513;"><strong>TOTAL :</strong> ${orderDetails.total.toFixed(2)}€</p>
