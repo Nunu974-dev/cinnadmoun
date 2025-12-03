@@ -2,24 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configuration de l'envoi d'emails via Hostinger
-const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 587,
-    secure: false, // true pour 465, false pour 587
-    auth: {
-        user: process.env.EMAIL_USER || 'contact@cinnadmoun.re',
-        pass: process.env.EMAIL_PASSWORD
-    },
-    tls: {
-        ciphers: 'SSLv3'
-    }
-});
+// Configuration Resend pour l'envoi d'emails
+const resend = new Resend(process.env.RESEND_API_KEY || 're_cpsrDLvY_Pc3euk9FATXwEtxxMp2r5Hzw');
 
 // Middleware
 app.use(cors({
@@ -134,8 +123,8 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                 
                 // Email au client
                 if (customerEmail) {
-                    await transporter.sendMail({
-                        from: '"Cinnad\'moun" <contact@cinnadmoun.re>',
+                    await resend.emails.send({
+                        from: 'Cinnad\'moun <onboarding@resend.dev>',
                         to: customerEmail,
                         subject: '✅ Confirmation de votre commande Cinnad\'moun',
                         html: `
@@ -174,9 +163,9 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                 }
                 
                 // Email de notification au marchand
-                await transporter.sendMail({
-                    from: '"Notification Cinnad\'moun" <contact@cinnadmoun.re>',
-                    to: 'contact@cinnadmoun.re',
+                await resend.emails.send({
+                    from: 'Cinnad\'moun <onboarding@resend.dev>',
+                    to: 'jchanewai@gmail.com',
                     subject: '🔔 Nouvelle commande reçue !',
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -250,8 +239,8 @@ app.post('/send-order-email', async (req, res) => {
         const customerEmail = customerInfo.email;
 
         // Email au client
-        await transporter.sendMail({
-            from: '"Cinnad\'moun" <contact@cinnadmoun.re>',
+        await resend.emails.send({
+            from: 'Cinnad\'moun <onboarding@resend.dev>',
             to: customerEmail,
             subject: '✅ Confirmation de votre commande Cinnad\'moun',
             html: `
@@ -286,9 +275,9 @@ app.post('/send-order-email', async (req, res) => {
         });
 
         // Email au commerçant
-        await transporter.sendMail({
-            from: '"Cinnad\'moun" <contact@cinnadmoun.re>',
-            to: 'contact@cinnadmoun.re',
+        await resend.emails.send({
+            from: 'Cinnad\'moun <onboarding@resend.dev>',
+            to: 'jchanewai@gmail.com',
             subject: `🛒 Nouvelle commande - ${customerName}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
