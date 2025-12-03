@@ -124,7 +124,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                 // Email au client
                 if (customerEmail) {
                     await resend.emails.send({
-                        from: 'Cinnad\'moun <noreply@cinnadmoun.re>',
+                        from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
                         to: customerEmail,
                         subject: '✅ Confirmation de votre commande Cinnad\'moun',
                         html: `
@@ -164,7 +164,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                 
                 // Email de notification au marchand
                 await resend.emails.send({
-                    from: 'Cinnad\'moun <noreply@cinnadmoun.re>',
+                    from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
                     to: 'contact@cinnadmoun.re',
                     subject: '🔔 Nouvelle commande reçue !',
                     html: `
@@ -240,7 +240,7 @@ app.post('/send-order-email', async (req, res) => {
 
         // Email au client
         await resend.emails.send({
-            from: 'Cinnad\'moun <noreply@cinnadmoun.re>',
+            from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
             to: customerEmail,
             subject: '✅ Confirmation de votre commande Cinnad\'moun',
             html: `
@@ -276,9 +276,9 @@ app.post('/send-order-email', async (req, res) => {
 
         // Email au commerçant
         await resend.emails.send({
-            from: 'Cinnad\'moun <noreply@cinnadmoun.re>',
+            from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
             to: 'contact@cinnadmoun.re',
-            subject: `🛒 Nouvelle commande - ${customerName}`,
+            subject: `🛌 Nouvelle commande - ${customerName}`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                     <h1 style="color: #8B4513;">Nouvelle commande reçue ! 🛒</h1>
