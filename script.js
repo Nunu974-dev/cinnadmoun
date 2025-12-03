@@ -108,7 +108,10 @@ function updateRemainingSlots() {
 
 // Fonction pour récupérer la composition de la box
 function getBoxComposition() {
-    if (!flavorInputs) return '';
+    if (!flavorInputs) {
+        console.log('⚠️ flavorInputs not found');
+        return '';
+    }
     const composition = [];
     flavorInputs.forEach(input => {
         const qty = parseInt(input.value) || 0;
@@ -117,7 +120,9 @@ function getBoxComposition() {
             composition.push(`${flavor} x${qty}`);
         }
     });
-    return composition.join(', ');
+    const result = composition.join(', ');
+    console.log('🎨 getBoxComposition() result:', result);
+    return result;
 }
 
 // ===========================
