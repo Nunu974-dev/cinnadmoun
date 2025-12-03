@@ -536,6 +536,7 @@ function collectFormData() {
             const productName = checkbox.closest('.accordion-item').querySelector('.accordion-title').textContent;
             const optionLabel = checkbox.closest('label').querySelector('span').textContent;
             const checkboxName = checkbox.getAttribute('name');
+            console.log(`🔍 Produit détecté - name: "${checkboxName}", quantity: ${quantity}`);
             const price = productPrices[checkboxName] || 0;
             const lineTotal = price * quantity;
             
