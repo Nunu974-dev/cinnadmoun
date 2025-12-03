@@ -140,14 +140,14 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                                     <p><strong>Point de retrait :</strong> ${metadata.pickupPoint || metadata.city}</p>
                                     <p><strong>Zone :</strong> ${metadata.zone}</p>
                                     <p><strong>Montant payé (acompte 20%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
-                                    <p><strong>Solde à régler à la livraison :</strong> ${metadata.remainingAmount || '0'}€</p>
-                                    <p><strong>Total commande :</strong> ${metadata.totalAmount || (session.amount_total / 100).toFixed(2)}€</p>
+                                    <p><strong>Solde à régler à la livraison :</strong> ${metadata.balanceAmount || '0'}€</p>
+                                    <p><strong>Total commande :</strong> ${metadata.orderTotal || (session.amount_total / 100).toFixed(2)}€</p>
                                 </div>
                                 
                                 <p><strong>Instructions :</strong></p>
                                 <ul>
                                     <li>Vous recevrez un SMS/email pour confirmer la date et l'heure de retrait</li>
-                                    <li>Le solde de ${metadata.remainingAmount || '0'}€ sera à régler en espèces lors du retrait</li>
+                                    <li>Le solde de ${metadata.balanceAmount || '0'}€ sera à régler en espèces lors du retrait</li>
                                     <li>Pensez à apporter votre bon de commande (cet email)</li>
                                 </ul>
                                 
@@ -183,8 +183,8 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                             <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin: 20px 0;">
                                 <h3 style="margin-top: 0;">💰 Montants</h3>
                                 <p><strong>Acompte payé (20%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
-                                <p><strong>Solde à encaisser :</strong> ${metadata.remainingAmount || '0'}€</p>
-                                <p><strong>Total commande :</strong> ${metadata.totalAmount || (session.amount_total / 100).toFixed(2)}€</p>
+                                <p><strong>Solde à encaisser :</strong> ${metadata.balanceAmount || '0'}€</p>
+                                <p><strong>Total commande :</strong> ${metadata.orderTotal || (session.amount_total / 100).toFixed(2)}€</p>
                             </div>
                             
                             <p><strong>ID Stripe :</strong> ${session.id}</p>
