@@ -10,11 +10,14 @@ const PORT = process.env.PORT || 3000;
 // Configuration de l'envoi d'emails via Hostinger
 const transporter = nodemailer.createTransport({
     host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false, // true pour 465, false pour 587
     auth: {
         user: process.env.EMAIL_USER || 'contact@cinnadmoun.re',
         pass: process.env.EMAIL_PASSWORD
+    },
+    tls: {
+        ciphers: 'SSLv3'
     }
 });
 
