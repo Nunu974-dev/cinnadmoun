@@ -52,7 +52,7 @@ app.post('/create-checkout-session', async (req, res) => {
                     price_data: {
                         currency: 'eur',
                         product_data: {
-                            name: `Commande Cinnad'moun - Acompte 30%`,
+                            name: `Commande Cinnad'moun - Acompte 20%`,
                             description: `${orderDetails.productSummary || 'Cinnamon rolls artisanaux'}`,
                             images: ['https://via.placeholder.com/300x300.png?text=Cinnadmoun'], // Remplacer par votre logo
                         },
@@ -139,7 +139,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                                     <p><strong>Téléphone :</strong> ${metadata.phone || 'Non renseigné'}</p>
                                     <p><strong>Point de retrait :</strong> ${metadata.pickupPoint || metadata.city}</p>
                                     <p><strong>Zone :</strong> ${metadata.zone}</p>
-                                    <p><strong>Montant payé (acompte 30%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
+                                    <p><strong>Montant payé (acompte 20%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
                                     <p><strong>Solde à régler à la livraison :</strong> ${metadata.remainingAmount || '0'}€</p>
                                     <p><strong>Total commande :</strong> ${metadata.totalAmount || (session.amount_total / 100).toFixed(2)}€</p>
                                 </div>
@@ -182,7 +182,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                             
                             <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin: 20px 0;">
                                 <h3 style="margin-top: 0;">💰 Montants</h3>
-                                <p><strong>Acompte payé (30%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
+                                <p><strong>Acompte payé (20%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
                                 <p><strong>Solde à encaisser :</strong> ${metadata.remainingAmount || '0'}€</p>
                                 <p><strong>Total commande :</strong> ${metadata.totalAmount || (session.amount_total / 100).toFixed(2)}€</p>
                             </div>

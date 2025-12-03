@@ -18,6 +18,45 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ===========================
+// Vérifier le retour de paiement Stripe
+// ===========================
+window.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get('payment');
+    
+    if (paymentStatus === 'success') {
+        // Récupérer les données de commande sauvegardées
+        const orderDataStr = sessionStorage.getItem('orderData');
+        
+        if (orderDataStr) {
+            try {
+                const orderData = JSON.parse(orderDataStr);
+                
+                // Afficher le modal de confirmation
+                setTimeout(() => {
+                    showModal(orderData);
+                }, 500);
+                
+                // Nettoyer sessionStorage
+                sessionStorage.removeItem('orderData');
+                
+                // Nettoyer l'URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (error) {
+                console.error('Erreur lors du chargement des données de commande:', error);
+            }
+        } else {
+            // Si pas de données sauvegardées, afficher un message générique
+            alert('✅ Paiement réussi ! Vous allez recevoir un email de confirmation.');
+        }
+    } else if (paymentStatus === 'cancelled') {
+        alert('❌ Paiement annulé. Votre commande n\'a pas été enregistrée.');
+        // Nettoyer l'URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+});
+
+// ===========================
 // Navbar Scroll Effect
 // ===========================
 window.addEventListener('scroll', () => {
@@ -433,20 +472,23 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         return;
     }
     
-    // MODE TEST : Envoi direct par email sans paiement
+    // Sauvegarder les données de commande dans sessionStorage pour la page de retour
+    sessionStorage.setItem('orderData', JSON.stringify(formData));
+    
     const btn = document.getElementById('stripePaymentBtn');
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '⏳ Envoi de la commande...';
+    btn.innerHTML = '⏳ Redirection vers Stripe...';
     
     try {
-        // Appel au backend pour envoyer l'email directement
-        const response = await fetch(`${BACKEND_URL}/send-order-email`, {
+        // Créer la session de paiement Stripe
+        const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                amount: Math.round(formData.deposit * 100), // Convertir en centimes
                 customerInfo: {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
@@ -466,38 +508,37 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
                     total: formData.total,
                     deposit: formData.deposit,
                     balance: formData.balance
-                }
+                },
+                successUrl: `${window.location.origin}${window.location.pathname}?payment=success`,
+                cancelUrl: `${window.location.origin}${window.location.pathname}?payment=cancelled`
             })
         });
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Erreur lors de l\'envoi de la commande');
+            throw new Error(errorData.error || 'Erreur lors de la création de la session de paiement');
         }
 
-        const result = await response.json();
+        const { sessionId } = await response.json();
         
-        console.log('✅ Commande envoyée:', result);
+        // Rediriger vers Stripe Checkout
+        const result = await stripe.redirectToCheckout({ sessionId });
         
-        // Afficher le modal de confirmation avec les données
-        showModal(formData);
-        
-        // Réactiver le bouton
-        btn.disabled = false;
-        btn.innerHTML = originalText;
+        if (result.error) {
+            throw new Error(result.error.message);
+        }
         
     } catch (error) {
-        console.error('❌ Erreur envoi commande:', error);
+        console.error('❌ Erreur paiement Stripe:', error);
         
         // Réactiver le bouton
         btn.disabled = false;
         btn.innerHTML = originalText;
         
         alert(
-            '❌ Erreur d\'envoi\n\n' +
+            '❌ Erreur de paiement\n\n' +
             error.message + '\n\n' +
-            'Vérifiez que le serveur backend est démarré.\n' +
-            'Commande: cd backend && npm start'
+            'Veuillez réessayer ou contactez-nous si le problème persiste.'
         );
     }
 });
