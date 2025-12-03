@@ -275,8 +275,8 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         return;
     }
     
-    // Calculer le montant de l'acompte (en centimes pour Stripe)
-    const depositAmount = Math.round(formData.deposit * 100);
+    // MODE TEST : Montant à 0€ pour tester sans payer
+    const depositAmount = 50; // 0.50€ minimum Stripe (50 centimes)
     
     // Désactiver le bouton pendant le traitement
     const btn = document.getElementById('stripePaymentBtn');
