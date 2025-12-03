@@ -32,15 +32,17 @@ window.addEventListener('scroll', () => {
 // ===========================
 // Box Découverte Configurator
 // ===========================
-const boxCheckbox = document.getElementById('boxDecouverteCheckbox');
-const boxQtyInput = document.getElementById('boxDecouverteQty');
-const boxConfigurator = document.getElementById('boxConfigurator');
-const flavorInputs = document.querySelectorAll('.box-flavor-qty');
-const remainingSlots = document.getElementById('boxRemainingSlots');
-const boxConfigError = document.getElementById('boxConfigError');
+// Les éléments seront initialisés dans DOMContentLoaded
+
+let boxCheckbox, boxQtyInput, boxConfigurator, flavorInputs, remainingSlots, boxConfigError;
 
 // Afficher/masquer le configurateur
 function toggleBoxConfigurator() {
+    if (!boxCheckbox || !boxQtyInput || !boxConfigurator) {
+        console.error('❌ Elements not found');
+        return;
+    }
+    
     const isChecked = boxCheckbox.checked;
     const qty = parseInt(boxQtyInput.value) || 0;
     
@@ -186,6 +188,20 @@ const deliveryFees = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialiser les éléments du configurateur Box Découverte
+    boxCheckbox = document.getElementById('boxDecouverteCheckbox');
+    boxQtyInput = document.getElementById('boxDecouverteQty');
+    boxConfigurator = document.getElementById('boxConfigurator');
+    flavorInputs = document.querySelectorAll('.box-flavor-qty');
+    remainingSlots = document.getElementById('boxRemainingSlots');
+    boxConfigError = document.getElementById('boxConfigError');
+    
+    console.log('🔍 Box elements initialized:', {
+        boxCheckbox: !!boxCheckbox,
+        boxQtyInput: !!boxQtyInput,
+        boxConfigurator: !!boxConfigurator
+    });
+    
     const checkboxes = document.querySelectorAll('.option-group input[type="checkbox"]');
     const citySelect = document.getElementById('city');
     
