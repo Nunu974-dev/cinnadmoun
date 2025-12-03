@@ -56,8 +56,7 @@ function toggleBoxConfigurator() {
     }
 }
 
-boxCheckbox.addEventListener('change', toggleBoxConfigurator);
-boxQtyInput.addEventListener('input', toggleBoxConfigurator);
+// Ces listeners sont gérés dans le bloc DOMContentLoaded ci-dessous
 
 // Réinitialiser les saveurs
 function resetBoxFlavors() {
@@ -199,12 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (!checkbox.checked) {
                 qtyInput.value = '0';
             }
-            // Forcer l'affichage du configurateur pour la Box Découverte
+            // Afficher le configurateur pour la Box Découverte immédiatement
             if (checkbox.id === 'boxDecouverteCheckbox') {
-                setTimeout(() => {
-                    toggleBoxConfigurator();
-                    console.log('Configurator toggled after checkbox change:', boxCheckbox.checked, boxQtyInput.value);
-                }, 50);
+                toggleBoxConfigurator();
+                console.log('✅ Checkbox changed, configurator called');
             }
             updateOrderSummary();
         });
@@ -216,12 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkbox.checked = false;
                 qtyInput.value = '0';
             }
-            // Forcer l'affichage du configurateur pour la Box Découverte
+            // Afficher le configurateur pour la Box Découverte immédiatement
             if (qtyInput.id === 'boxDecouverteQty') {
-                setTimeout(() => {
-                    toggleBoxConfigurator();
-                    console.log('Configurator toggled after qty change:', boxCheckbox.checked, boxQtyInput.value);
-                }, 50);
+                toggleBoxConfigurator();
+                console.log('✅ Qty changed, configurator called');
             }
             updateOrderSummary();
         });
@@ -229,6 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
         qtyInput.addEventListener('input', () => {
             if (parseInt(qtyInput.value) < 0) {
                 qtyInput.value = '0';
+            }
+            // Afficher le configurateur si on change la quantité manuellement
+            if (qtyInput.id === 'boxDecouverteQty') {
+                toggleBoxConfigurator();
             }
             updateOrderSummary();
         });
