@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinnad'moun - Cinnamon Rolls Artisanaux de La Réunion</title>
-    <link rel="stylesheet" href="styles.css?v=2.2">
+    <link rel="stylesheet" href="styles.css?v=2.3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -701,17 +701,69 @@
 
     <!-- Modal de Confirmation -->
     <div id="confirmationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-icon">✓</div>
-            <h3>Commande Envoyée !</h3>
-            <p>Merci pour votre commande. Nous vous contacterons très bientôt pour la confirmer.</p>
-            <button class="btn btn-primary" onclick="closeModal()">Fermer</button>
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <div class="modal-icon-success">✓</div>
+                <h2>Commande Confirmée !</h2>
+                <p class="modal-subtitle">Merci pour votre confiance. Nous avons bien reçu votre commande.</p>
+            </div>
+            
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>📦 Votre Commande</h3>
+                    <div id="modalOrderItems" class="modal-order-items">
+                        <!-- Les produits seront injectés ici -->
+                    </div>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>📍 Point de Retrait</h3>
+                    <p id="modalPickupPoint" class="modal-info"></p>
+                </div>
+                
+                <div class="modal-section">
+                    <h3>📅 Date de Retrait</h3>
+                    <p id="modalDeliveryDate" class="modal-info"></p>
+                </div>
+                
+                <div class="modal-section modal-total">
+                    <div class="modal-total-row">
+                        <span>Sous-total :</span>
+                        <strong id="modalSubtotal">0,00€</strong>
+                    </div>
+                    <div class="modal-total-row">
+                        <span>Frais de livraison :</span>
+                        <strong id="modalDeliveryFee">0,00€</strong>
+                    </div>
+                    <div class="modal-total-row modal-total-main">
+                        <span>Total :</span>
+                        <strong id="modalTotal">0,00€</strong>
+                    </div>
+                    <div class="modal-deposit-info">
+                        <p>💳 Acompte payé : <strong id="modalDeposit">0,00€</strong></p>
+                        <p class="modal-balance">Solde à régler à la livraison : <strong id="modalBalance">0,00€</strong> (espèces uniquement)</p>
+                    </div>
+                </div>
+                
+                <div class="modal-next-steps">
+                    <h4>📧 Prochaines étapes</h4>
+                    <ul>
+                        <li>Vous recevrez un email de confirmation à <strong id="modalEmail"></strong></li>
+                        <li>Nous vous contacterons par téléphone pour finaliser les détails</li>
+                        <li>Préparez le solde en espèces pour le jour du retrait</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-large" onclick="closeModal()">Parfait, merci !</button>
+            </div>
         </div>
     </div>
 
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
     <script src="config.js"></script>
-    <script src="script.js?v=2.2"></script>
+    <script src="script.js?v=2.3"></script>
 </body>
 </html>

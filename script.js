@@ -479,12 +479,8 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         
         console.log('✅ Commande envoyée:', result);
         
-        // Afficher message de succès
-        alert('✅ Commande envoyée avec succès !\n\nVous recevrez un email de confirmation à ' + formData.email);
-        
-        // Réinitialiser le formulaire
-        form.reset();
-        updateOrderSummary();
+        // Afficher le modal de confirmation avec les données
+        showModal(formData);
         
         // Réactiver le bouton
         btn.disabled = false;
@@ -717,7 +713,54 @@ function formatDate(dateString) {
 // ===========================
 // Modal Functions
 // ===========================
-function showModal() {
+function showModal(orderData) {
+    // Remplir les informations du modal
+    if (orderData) {
+        // Produits
+        const modalOrderItems = document.getElementById('modalOrderItems');
+        modalOrderItems.innerHTML = orderData.products.map(item => `
+            <div class="modal-order-item">
+                <div class="modal-item-header">
+                    <div>
+                        <div class="modal-item-name">${item.name}</div>
+                        <div class="modal-item-details">${item.option} × ${item.quantity}</div>
+                    </div>
+                    <div class="modal-item-price">${item.total.toFixed(2)}€</div>
+                </div>
+                ${item.composition ? `
+                    <div class="modal-item-composition">
+                        <strong>📦 Composition personnalisée :</strong> ${item.composition}
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+        
+        // Point de retrait
+        document.getElementById('modalPickupPoint').textContent = orderData.pickupPoint;
+        
+        // Date de retrait
+        const deliveryDate = new Date(orderData.deliveryDate);
+        const formattedDate = deliveryDate.toLocaleDateString('fr-FR', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+        document.getElementById('modalDeliveryDate').textContent = formattedDate;
+        
+        // Montants
+        document.getElementById('modalSubtotal').textContent = `${orderData.subtotal.toFixed(2)}€`;
+        document.getElementById('modalDeliveryFee').textContent = `${orderData.deliveryFee.toFixed(2)}€`;
+        document.getElementById('modalTotal').textContent = `${orderData.total.toFixed(2)}€`;
+        document.getElementById('modalDeposit').textContent = `${orderData.deposit.toFixed(2)}€`;
+        
+        const balance = orderData.total - orderData.deposit;
+        document.getElementById('modalBalance').textContent = `${balance.toFixed(2)}€`;
+        
+        // Email
+        document.getElementById('modalEmail').textContent = orderData.email;
+    }
+    
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -725,6 +768,12 @@ function showModal() {
 function closeModal() {
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
+    
+    // Réinitialiser le formulaire après fermeture
+    setTimeout(() => {
+        document.getElementById('orderForm').reset();
+        location.reload(); // Recharger la page pour réinitialiser complètement
+    }, 300);
 }
 
 // Close modal when clicking outside
