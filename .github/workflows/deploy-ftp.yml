@@ -28,11 +28,10 @@ jobs:
         set ftp:ssl-allow no;
         open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
         cd public_html;
-        lcd .;
         mput -E index.html;
         mput -E script.js;
         mput -E styles.css;
         mput -E success.html;
-        mirror -Rev --delete --exclude .git/ --exclude .github/ --exclude backend/ --exclude node_modules/ --exclude index.html --exclude script.js --exclude styles.css --exclude success.html ./ ./;
+        mirror -Rev --delete --exclude .git/ --exclude .github/ --exclude backend/ --exclude node_modules/ --exclude index.html --exclude script.js --exclude styles.css --exclude success.html --exclude config.js ./ ./;
         bye
         "
