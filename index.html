@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinnad'moun - Cinnamon Rolls Artisanaux de La Réunion</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=2.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -272,7 +272,7 @@
                                     <span class="accordion-icon">+</span>
                                 </button>
                                 <div class="accordion-content">
-                                    <p class="accordion-desc">Cannelle de Ceylan & cream cheese</p>
+                                    <p class="accordion-desc">Cannelle & cream cheese</p>
                                     <div class="product-options">
                                         <div class="option-group">
                                             <label>
@@ -299,7 +299,7 @@
                                     <span class="accordion-icon">+</span>
                                 </button>
                                 <div class="accordion-content">
-                                    <p class="accordion-desc">Pomme et cannelle</p>
+                                    <p class="accordion-desc">Pomme caramélisée et cannelle</p>
                                     <div class="product-options">
                                         <div class="option-group">
                                             <label>
@@ -326,7 +326,7 @@
                                     <span class="accordion-icon">+</span>
                                 </button>
                                 <div class="accordion-content">
-                                    <p class="accordion-desc">Saveur cacahuète croquante</p>
+                                    <p class="accordion-desc">Saveur Dakatine onctueuse</p>
                                     <div class="product-options">
                                         <div class="option-group">
                                             <label>
@@ -407,14 +407,64 @@
                                     <span class="accordion-icon">+</span>
                                 </button>
                                 <div class="accordion-content">
-                                    <p class="accordion-desc">4 saveurs variées pour tout découvrir</p>
+                                    <p class="accordion-desc">Composez votre box de 4 saveurs</p>
                                     <div class="product-options">
                                         <div class="option-group">
                                             <label>
-                                                <input type="checkbox" name="box-decouverte" value="decouverte">
+                                                <input type="checkbox" name="box-decouverte" value="decouverte" id="boxDecouverteCheckbox">
                                                 <span>Box de 4 saveurs - 20,00€</span>
                                             </label>
-                                            <input type="number" name="box-decouverte-qty" min="0" value="0" class="qty-input">
+                                            <input type="number" name="box-decouverte-qty" min="0" value="0" class="qty-input" id="boxDecouverteQty">
+                                        </div>
+                                        
+                                        <!-- Configurateur de box -->
+                                        <div id="boxConfigurator" style="display: none; margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+                                            <h4 style="margin-top: 0; color: #8B4513;">🎨 Composez votre box (4 saveurs)</h4>
+                                            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Sélectionnez vos saveurs favorites. Total restant : <strong id="boxRemainingSlots">4</strong></p>
+                                            
+                                            <div class="box-flavor-selector">
+                                                <div class="flavor-option">
+                                                    <label style="display: flex; align-items: center; gap: 10px;">
+                                                        <img src="img/Nature.PNG" alt="Nature" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                        <span style="flex: 1;">Nature</span>
+                                                        <input type="number" class="box-flavor-qty" data-flavor="Nature" min="0" max="4" value="0" style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="flavor-option">
+                                                    <label style="display: flex; align-items: center; gap: 10px;">
+                                                        <img src="img/Chocolat .png" alt="Chocolat" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                        <span style="flex: 1;">Chocolat</span>
+                                                        <input type="number" class="box-flavor-qty" data-flavor="Chocolat" min="0" max="4" value="0" style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="flavor-option">
+                                                    <label style="display: flex; align-items: center; gap: 10px;">
+                                                        <img src="img/Pomme.png" alt="Pomme Cannelle" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                        <span style="flex: 1;">Pomme Cannelle</span>
+                                                        <input type="number" class="box-flavor-qty" data-flavor="Pomme Cannelle" min="0" max="4" value="0" style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="flavor-option">
+                                                    <label style="display: flex; align-items: center; gap: 10px;">
+                                                        <img src="img/Cahuete.png" alt="Cacahuète" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                        <span style="flex: 1;">Cacahuète</span>
+                                                        <input type="number" class="box-flavor-qty" data-flavor="Cacahuète" min="0" max="4" value="0" style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                                    </label>
+                                                </div>
+                                                
+                                                <div class="flavor-option">
+                                                    <label style="display: flex; align-items: center; gap: 10px;">
+                                                        <img src="img/Bueno.jpg" alt="Bueno" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                                                        <span style="flex: 1;">Bueno</span>
+                                                        <input type="number" class="box-flavor-qty" data-flavor="Bueno" min="0" max="4" value="0" style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            
+                                            <div id="boxConfigError" style="display: none; margin-top: 10px; padding: 10px; background: #ffe6e6; border-left: 3px solid #ff4444; border-radius: 4px; color: #cc0000; font-size: 14px;"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -617,7 +667,7 @@
                     <h3 class="footer-title">Contact</h3>
                     <ul class="footer-contact">
                         <li>📧 <a href="mailto:contact@cinnadmoun.re">contact@cinnadmoun.re</a></li>
-                        <li>📱 <a href="tel:+262692000000">+262 692 00 00 00</a></li>
+                        <li>📱 <a href="tel:+262692377243">+262 692 37 72 43</a></li>
                         <li>📍 La Réunion, 974</li>
                     </ul>
                 </div>
@@ -662,6 +712,6 @@
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
     <script src="config.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=2.0"></script>
 </body>
 </html>
