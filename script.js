@@ -257,7 +257,7 @@ deliveryDateInput.min = minDate.toISOString().split('T')[0];
 // Stripe Payment Integration
 // ===========================
 const stripe = Stripe(STRIPE_CONFIG.publicKey);
-const BACKEND_URL = 'https://web-production-51dde.up.railway.app'; // URL du backend
+const BACKEND_URL = 'https://cinnadmoun.onrender.com'; // URL du backend
 
 document.getElementById('stripePaymentBtn').addEventListener('click', async function() {
     // Valider le formulaire avant de continuer
