@@ -30,6 +30,88 @@ window.addEventListener('scroll', () => {
 });
 
 // ===========================
+// Box Découverte Configurator
+// ===========================
+const boxCheckbox = document.getElementById('boxDecouverteCheckbox');
+const boxQtyInput = document.getElementById('boxDecouverteQty');
+const boxConfigurator = document.getElementById('boxConfigurator');
+const flavorInputs = document.querySelectorAll('.box-flavor-qty');
+const remainingSlots = document.getElementById('boxRemainingSlots');
+const boxConfigError = document.getElementById('boxConfigError');
+
+// Afficher/masquer le configurateur
+function toggleBoxConfigurator() {
+    const isChecked = boxCheckbox.checked;
+    const qty = parseInt(boxQtyInput.value) || 0;
+    
+    if (isChecked && qty > 0) {
+        boxConfigurator.style.display = 'block';
+    } else {
+        boxConfigurator.style.display = 'none';
+        resetBoxFlavors();
+    }
+}
+
+boxCheckbox.addEventListener('change', toggleBoxConfigurator);
+boxQtyInput.addEventListener('input', toggleBoxConfigurator);
+
+// Réinitialiser les saveurs
+function resetBoxFlavors() {
+    flavorInputs.forEach(input => input.value = 0);
+    updateRemainingSlots();
+}
+
+// Calculer les slots restants
+function updateRemainingSlots() {
+    let total = 0;
+    flavorInputs.forEach(input => {
+        total += parseInt(input.value) || 0;
+    });
+    
+    const remaining = 4 - total;
+    remainingSlots.textContent = remaining;
+    
+    if (remaining < 0) {
+        boxConfigError.style.display = 'block';
+        boxConfigError.textContent = `❌ Trop de saveurs sélectionnées ! Retirez ${Math.abs(remaining)} saveur(s).`;
+        remainingSlots.style.color = '#ff4444';
+    } else if (remaining > 0 && total > 0) {
+        boxConfigError.style.display = 'block';
+        boxConfigError.style.background = '#fff3cd';
+        boxConfigError.style.borderColor = '#ffc107';
+        boxConfigError.style.color = '#856404';
+        boxConfigError.textContent = `⚠️ Il reste ${remaining} place(s) dans votre box.`;
+        remainingSlots.style.color = '#ffc107';
+    } else if (total === 4) {
+        boxConfigError.style.display = 'none';
+        remainingSlots.style.color = '#28a745';
+    } else {
+        boxConfigError.style.display = 'none';
+        remainingSlots.style.color = '#666';
+    }
+    
+    return { total, remaining };
+}
+
+// Écouter les changements de quantité
+flavorInputs.forEach(input => {
+    input.addEventListener('input', updateRemainingSlots);
+});
+
+// Fonction pour récupérer la composition de la box
+function getBoxComposition() {
+    const composition = [];
+    flavorInputs.forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        if (qty > 0) {
+            const flavor = input.dataset.flavor;
+            composition.push(`${flavor} x${qty}`);
+        }
+    });
+    return composition.join(', ');
+}
+
+// ===========================
 // Smooth Scroll
 // ===========================
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -169,12 +251,27 @@ function updateOrderSummary() {
             const lineTotal = price * quantity;
             
             subtotal += lineTotal;
+            
+            // Si c'est la Box Découverte, ajouter la composition
+            let composition = '';
+            if (checkboxName === 'box-decouverte') {
+                composition = getBoxComposition();
+                
+                // Vérifier que la composition est valide (4 saveurs)
+                const { total } = updateRemainingSlots();
+                if (total !== 4) {
+                    // Ne pas ajouter la box si la composition n'est pas complète
+                    return;
+                }
+            }
+            
             orderItems.push({
                 name: productName,
                 option: optionLabel,
                 quantity: quantity,
                 unitPrice: price,
-                total: lineTotal
+                total: lineTotal,
+                composition: composition
             });
         }
     });
@@ -196,8 +293,15 @@ function updateOrderSummary() {
             <li>
                 <span>${item.name} - ${item.option} × ${item.quantity}</span>
                 <strong>${item.total.toFixed(2)}€</strong>
-            </li>
-        `;
+            </li>`;
+        
+        // Afficher la composition si c'est une Box Découverte
+        if (item.composition) {
+            summaryHTML += `
+            <li style="padding-left: 20px; font-size: 0.9em; color: #666;">
+                <span>📦 Composition: ${item.composition}</span>
+            </li>`;
+        }
     });
     summaryHTML += '</ul>';
     summaryContent.innerHTML = summaryHTML;
@@ -737,7 +841,7 @@ const footerInfoData = {
                 <li>Un SMS la veille de la livraison</li>
                 <li>Un appel 30 minutes avant la livraison</li>
             </ul>
-            <p>Pour toute question sur votre commande, contactez-nous au +262 692 00 00 00</p>
+            <p>Pour toute question sur votre commande, contactez-nous au +262 692 37 72 43</p>
         `
     },
     'faq': {
