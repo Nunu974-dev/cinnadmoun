@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinnad'moun - Cinnamon Rolls Artisanaux de La Réunion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="#accueil" class="logo">
+                    <img src="img/Logo.png" alt="Cinnad'moun" class="logo-img logo-white">
+                </a>
+                <div class="nav-links">
+                    <a href="#accueil">Accueil</a>
+                    <a href="#a-propos">Notre Histoire</a>
+                    <a href="#produits">Nos Créations</a>
+                    <a href="#commander">Commander</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <button class="menu-toggle" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="accueil" class="hero">
+        <div class="hero-background">
+            <img src="img/freepik__extreme-macro-closeup-of-a-cinnamon-roll-inside-th__57559.png" alt="Cinnamon Roll">
+        </div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Artisan Pâtissier</div>
+            <h1 class="hero-title">L'Art du Cinnamon Roll</h1>
+            <p class="hero-subtitle">Des créations artisanales inspirées de La Réunion</p>
+            <a href="#commander" class="btn btn-primary">Commander Maintenant</a>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+
+    <!-- À Propos Section -->
+    <section id="a-propos" class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Notre Histoire</span>
+                <h2 class="section-title">Une Passion Artisanale</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="lead">Cinnad'moun incarne l'excellence de la pâtisserie réunionnaise, où tradition et innovation se rencontrent.</p>
+                    <p>Inspirés par l'exigence des Meilleurs Ouvriers de France, nous créons des cinnamon rolls d'exception, élaborés avec des ingrédients soigneusement sélectionnés et un savoir-faire artisanal.</p>
+                    <p>Chaque création est le fruit d'un travail minutieux, d'une attention portée aux détails et d'une passion pour l'excellence qui se transmet à chaque bouchée.</p>
+                    <div class="about-features">
+                        <div class="feature">
+                            <div class="feature-icon">🎯</div>
+                            <h3>Excellence</h3>
+                            <p>Des standards dignes des MOF</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">🌺</div>
+                            <h3>Local</h3>
+                            <p>Saveurs de La Réunion</p>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">👨‍🍳</div>
+                            <h3>Artisanal</h3>
+                            <p>100% fait main</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image">
+                    <img src="img/freepik__extreme-macro-closeup-of-a-cinnamon-roll-inside-th__57559.png" alt="Cinnamon Roll artisanal">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produits Section -->
+    <section id="produits" class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Nos Créations</span>
+                <h2 class="section-title">Une Palette de Saveurs</h2>
+            </div>
+            <div class="products-grid">
+                <!-- Produit 1 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="img/7d26d6609084cb7b45a9681a825693d2c2991fb07ada6d6749b2d6ba71489947.jpg" alt="Cinnamon Roll Classique">
+                        <div class="product-badge">Signature</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-name">Le Classique</h3>
+                        <p class="product-description">Notre recette signature : cannelle de Ceylan, sucre roux et glaçage au cream cheese. L'essence même de la perfection.</p>
+                        <div class="product-pricing">
+                            <div class="price-option">
+                                <span class="price-label">Pièce</span>
+                                <span class="price-value">5,50€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 3</span>
+                                <span class="price-value">15,00€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 6</span>
+                                <span class="price-value">28,00€</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 2 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="img/49d9cbe7b1effcec5477e3357c602c4bb937d74fc3fc9f419b9d5768bad74852.jpg" alt="Cinnamon Roll Vanille Bourbon">
+                        <div class="product-badge">Premium</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-name">Vanille Bourbon</h3>
+                        <p class="product-description">Sublimé par la vanille Bourbon de La Réunion, un mariage exceptionnel de saveurs locales et de tradition.</p>
+                        <div class="product-pricing">
+                            <div class="price-option">
+                                <span class="price-label">Pièce</span>
+                                <span class="price-value">6,50€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 3</span>
+                                <span class="price-value">18,00€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 6</span>
+                                <span class="price-value">35,00€</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 3 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="img/ecf1bae70262b87ae016668a18f968615d5dc1e803aafa7b9b578cca1dc4ead.jpg" alt="Cinnamon Roll Caramel Beurre Salé">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-name">Caramel Beurre Salé</h3>
+                        <p class="product-description">Une touche gourmande avec notre caramel maison au beurre demi-sel, pour les amateurs de douceur intense.</p>
+                        <div class="product-pricing">
+                            <div class="price-option">
+                                <span class="price-label">Pièce</span>
+                                <span class="price-value">6,00€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 3</span>
+                                <span class="price-value">17,00€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 6</span>
+                                <span class="price-value">32,00€</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 4 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="img/Etiquette.jpg" alt="Cinnamon Roll Chocolat Praliné">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-name">Chocolat Praliné</h3>
+                        <p class="product-description">Pour les amateurs de chocolat : chocolat noir 70% et praliné noisette croquant, une création intense.</p>
+                        <div class="product-pricing">
+                            <div class="price-option">
+                                <span class="price-label">Pièce</span>
+                                <span class="price-value">6,50€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 3</span>
+                                <span class="price-value">18,00€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 6</span>
+                                <span class="price-value">35,00€</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 5 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="img/freepik__topdown-overhead-shot-of-a-kraft-bakery-delivery-b__57558.png" alt="Cinnamon Roll Fruits Exotiques">
+                        <div class="product-badge">Nouveauté</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-name">Fruits Exotiques</h3>
+                        <p class="product-description">Une explosion tropicale avec mangue, fruits de la passion et litchi. L'esprit de La Réunion dans chaque bouchée.</p>
+                        <div class="product-pricing">
+                            <div class="price-option">
+                                <span class="price-label">Pièce</span>
+                                <span class="price-value">6,50€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 3</span>
+                                <span class="price-value">18,00€</span>
+                            </div>
+                            <div class="price-option">
+                                <span class="price-label">Box de 6</span>
+                                <span class="price-value">35,00€</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produit 6 -->
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="img/freepik__photorealistic-scene-of-two-stacked-kraft-delivery__57560.png" alt="Box Découverte">
+                        <div class="product-badge">Box</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-name">Box Découverte</h3>
+                        <p class="product-description">Une sélection de 6 cinnamon rolls aux saveurs variées, parfait pour découvrir notre gamme complète.</p>
+                        <div class="product-pricing">
+                            <div class="price-option special">
+                                <span class="price-label">Box de 6 saveurs</span>
+                                <span class="price-value">36,00€</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commande Section -->
+    <section id="commander" class="order-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Passez Commande</span>
+                <h2 class="section-title">Réservez Vos Créations</h2>
+                <p class="section-description">Complétez le formulaire ci-dessous. Nous vous contacterons rapidement pour confirmer votre commande.</p>
+            </div>
+            <div class="order-form-container">
+                <form id="orderForm" class="order-form">
+                    <!-- Informations Personnelles -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Vos Informations</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Prénom *</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Nom *</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Téléphone *</label>
+                                <input type="tel" id="phone" name="phone" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sélection des Produits -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Votre Commande</h3>
+                        <div class="products-selection">
+                            
+                            <!-- Le Classique -->
+                            <div class="accordion-item">
+                                <button class="accordion-header" type="button">
+                                    <span class="accordion-title">Le Classique</span>
+                                    <span class="accordion-icon">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <p class="accordion-desc">Cannelle de Ceylan & cream cheese</p>
+                                    <div class="product-options">
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="classique-piece" value="piece">
+                                                <span>Pièce - 5,50€</span>
+                                            </label>
+                                            <input type="number" name="classique-piece-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="classique-box3" value="box3">
+                                                <span>Box de 3 - 15,00€</span>
+                                            </label>
+                                            <input type="number" name="classique-box3-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="classique-box6" value="box6">
+                                                <span>Box de 6 - 28,00€</span>
+                                            </label>
+                                            <input type="number" name="classique-box6-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Vanille Bourbon -->
+                            <div class="accordion-item">
+                                <button class="accordion-header" type="button">
+                                    <span class="accordion-title">Vanille Bourbon</span>
+                                    <span class="accordion-icon">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <p class="accordion-desc">Vanille Bourbon de La Réunion</p>
+                                    <div class="product-options">
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="vanille-piece" value="piece">
+                                                <span>Pièce - 6,50€</span>
+                                            </label>
+                                            <input type="number" name="vanille-piece-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="vanille-box3" value="box3">
+                                                <span>Box de 3 - 18,00€</span>
+                                            </label>
+                                            <input type="number" name="vanille-box3-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="vanille-box6" value="box6">
+                                                <span>Box de 6 - 35,00€</span>
+                                            </label>
+                                            <input type="number" name="vanille-box6-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Caramel Beurre Salé -->
+                            <div class="accordion-item">
+                                <button class="accordion-header" type="button">
+                                    <span class="accordion-title">Caramel Beurre Salé</span>
+                                    <span class="accordion-icon">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <p class="accordion-desc">Caramel maison au beurre demi-sel</p>
+                                    <div class="product-options">
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="caramel-piece" value="piece">
+                                                <span>Pièce - 6,00€</span>
+                                            </label>
+                                            <input type="number" name="caramel-piece-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="caramel-box3" value="box3">
+                                                <span>Box de 3 - 17,00€</span>
+                                            </label>
+                                            <input type="number" name="caramel-box3-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="caramel-box6" value="box6">
+                                                <span>Box de 6 - 32,00€</span>
+                                            </label>
+                                            <input type="number" name="caramel-box6-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chocolat Praliné -->
+                            <div class="accordion-item">
+                                <button class="accordion-header" type="button">
+                                    <span class="accordion-title">Chocolat Praliné</span>
+                                    <span class="accordion-icon">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <p class="accordion-desc">Chocolat noir 70% & praliné noisette</p>
+                                    <div class="product-options">
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="chocolat-piece" value="piece">
+                                                <span>Pièce - 6,50€</span>
+                                            </label>
+                                            <input type="number" name="chocolat-piece-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="chocolat-box3" value="box3">
+                                                <span>Box de 3 - 18,00€</span>
+                                            </label>
+                                            <input type="number" name="chocolat-box3-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="chocolat-box6" value="box6">
+                                                <span>Box de 6 - 35,00€</span>
+                                            </label>
+                                            <input type="number" name="chocolat-box6-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fruits Exotiques -->
+                            <div class="accordion-item">
+                                <button class="accordion-header" type="button">
+                                    <span class="accordion-title">Fruits Exotiques</span>
+                                    <span class="accordion-icon">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <p class="accordion-desc">Mangue, fruits de la passion & litchi</p>
+                                    <div class="product-options">
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="fruits-piece" value="piece">
+                                                <span>Pièce - 6,50€</span>
+                                            </label>
+                                            <input type="number" name="fruits-piece-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="fruits-box3" value="box3">
+                                                <span>Box de 3 - 18,00€</span>
+                                            </label>
+                                            <input type="number" name="fruits-box3-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="fruits-box6" value="box6">
+                                                <span>Box de 6 - 35,00€</span>
+                                            </label>
+                                            <input type="number" name="fruits-box6-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Box Découverte -->
+                            <div class="accordion-item">
+                                <button class="accordion-header" type="button">
+                                    <span class="accordion-title">Box Découverte</span>
+                                    <span class="accordion-icon">+</span>
+                                </button>
+                                <div class="accordion-content">
+                                    <p class="accordion-desc">6 saveurs variées pour tout découvrir</p>
+                                    <div class="product-options">
+                                        <div class="option-group">
+                                            <label>
+                                                <input type="checkbox" name="box-decouverte" value="decouverte">
+                                                <span>Box de 6 saveurs - 36,00€</span>
+                                            </label>
+                                            <input type="number" name="box-decouverte-qty" min="0" value="0" class="qty-input">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Date et Remarques -->
+                    <div class="form-section">
+                        <h3 class="form-section-title">Détails de la Commande</h3>
+                        <div class="form-group">
+                            <label for="deliveryDate">Date de retrait souhaitée *</label>
+                            <input type="date" id="deliveryDate" name="deliveryDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Remarques ou demandes spéciales</label>
+                            <textarea id="message" name="message" rows="4" placeholder="Allergies, préférences, occasion spéciale..."></textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large">Envoyer ma Commande</button>
+                    <p class="form-note">* Champs obligatoires. Nous vous contacterons sous 24h pour confirmer votre commande.</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="section-header">
+                        <span class="section-subtitle">Restons en Contact</span>
+                        <h2 class="section-title">Une Question ?</h2>
+                    </div>
+                    <p class="contact-intro">N'hésitez pas à nous contacter pour toute question ou commande spéciale. Notre équipe est à votre écoute.</p>
+                    <div class="contact-grid">
+                        <div class="contact-item">
+                            <div class="contact-icon">📧</div>
+                            <div>
+                                <h4>Email</h4>
+                                <p><a href="mailto:contact@cinnadmoun.re">contact@cinnadmoun.re</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">📱</div>
+                            <div>
+                                <h4>Téléphone</h4>
+                                <p><a href="tel:+262692000000">+262 692 00 00 00</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">�</div>
+                            <div>
+                                <h4>Adresse</h4>
+                                <p>La Réunion, 974</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon">🕒</div>
+                            <div>
+                                <h4>Horaires</h4>
+                                <p>Mar-Sam: 8h-18h<br>Dim: 8h-13h</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-main">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <img src="img/Logo.png" alt="Cinnad'moun" class="logo-white">
+                    </div>
+                    <p class="footer-description">Créations artisanales de cinnamon rolls inspirées de La Réunion. Excellence et passion dans chaque bouchée.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Livraison</h3>
+                    <ul class="footer-links">
+                        <li><a href="#livraison">Zones de livraison</a></li>
+                        <li><a href="#livraison">Frais de livraison</a></li>
+                        <li><a href="#livraison">Délais</a></li>
+                        <li><a href="#livraison">Retrait en boutique</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Commande</h3>
+                    <ul class="footer-links">
+                        <li><a href="#paiement">Modes de paiement</a></li>
+                        <li><a href="#paiement">Sécurité</a></li>
+                        <li><a href="#commander">Passer commande</a></li>
+                        <li><a href="#suivi">Suivi de commande</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Aide</h3>
+                    <ul class="footer-links">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#contact">Nous contacter</a></li>
+                        <li><a href="#mentions">Mentions légales</a></li>
+                        <li><a href="#cgv">CGV</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Contact</h3>
+                    <ul class="footer-contact">
+                        <li>📧 <a href="mailto:contact@cinnadmoun.re">contact@cinnadmoun.re</a></li>
+                        <li>📱 <a href="tel:+262692000000">+262 692 00 00 00</a></li>
+                        <li>📍 La Réunion, 974</li>
+                        <li>🕒 Mar-Sam: 8h-18h<br>&nbsp;&nbsp;&nbsp;&nbsp;Dim: 8h-13h</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copyright">&copy; 2025 Cinnad'moun. Tous droits réservés.</p>
+                <div class="footer-payment">
+                    <span>Paiements acceptés:</span>
+                    <span class="payment-methods">💳 CB • 📱 Mobile • 💰 Espèces</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Confirmation -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">✓</div>
+            <h3>Commande Envoyée !</h3>
+            <p>Merci pour votre commande. Nous vous contacterons très bientôt pour la confirmer.</p>
+            <button class="btn btn-primary" onclick="closeModal()">Fermer</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

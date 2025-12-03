@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Réussi - Cinnad'moun</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .success-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-cream) 100%);
+        }
+        
+        .success-content {
+            max-width: 600px;
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(139, 111, 71, 0.15);
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-content h1 {
+            font-family: var(--font-heading);
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .success-content p {
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+        
+        .order-info {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .order-info p {
+            margin: 0.5rem 0;
+            font-size: 0.95rem;
+        }
+        
+        .order-info strong {
+            color: var(--primary-dark);
+        }
+        
+        .btn-container {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-content">
+            <div class="success-icon">✅</div>
+            <h1>Paiement Réussi !</h1>
+            <p><strong>Merci pour votre commande chez Cinnad'moun</strong></p>
+            
+            <div class="order-info">
+                <p><strong>📧 Email de confirmation envoyé</strong></p>
+                <p>Vous allez recevoir un email récapitulatif de votre commande dans quelques instants.</p>
+            </div>
+            
+            <p>🎉 Votre acompte de 30% a été payé avec succès.</p>
+            <p>💰 Le solde sera à régler à la livraison.</p>
+            <p>📞 Nous vous contacterons sous 24h pour confirmer tous les détails de votre commande.</p>
+            
+            <div class="order-info">
+                <p><strong>📦 Prochaines étapes :</strong></p>
+                <p>1. Vous recevrez un SMS la veille de la livraison</p>
+                <p>2. Nous vous appellerons 30 minutes avant d'arriver</p>
+                <p>3. Réglez le solde en espèces ou carte à la livraison</p>
+            </div>
+            
+            <div class="btn-container">
+                <a href="index.html" class="btn btn-primary">Retour à l'accueil</a>
+                <a href="index.html#produits" class="btn btn-secondary">Voir nos produits</a>
+            </div>
+            
+            <p style="margin-top: 2rem; font-size: 0.9rem; color: var(--text-light);">
+                Une question ? Contactez-nous au +262 692 00 00 00
+            </p>
+        </div>
+    </div>
+</body>
+</html>

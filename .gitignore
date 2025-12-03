@@ -1,0 +1,14 @@
+# Fichiers de configuration sensibles
+config.js
+
+# Backend
+backend/.env
+backend/node_modules/
+backend/package-lock.json
+
+# Fichiers système macOS
+.DS_Store
+
+# Fichiers de backup
+*.bak
+*~
