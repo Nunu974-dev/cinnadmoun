@@ -238,6 +238,9 @@ app.post('/send-order-email', async (req, res) => {
         const customerName = `${customerInfo.firstName} ${customerInfo.lastName}`;
         const customerEmail = customerInfo.email;
 
+        // LOG DEBUG : Vérifier les produits reçus
+        console.log('📦 Produits reçus:', JSON.stringify(orderDetails.products, null, 2));
+
         // Email au client
         await resend.emails.send({
             from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
