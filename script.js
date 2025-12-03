@@ -536,20 +536,17 @@ function collectFormData() {
             let composition = '';
             if (checkboxName === 'box-decouverte') {
                 composition = getBoxComposition();
-                console.log('🎨 Box Découverte composition:', composition);
             }
             
             subtotal += lineTotal;
-            const product = {
+            products.push({
                 name: productName,
                 option: optionLabel,
                 quantity: quantity,
                 unitPrice: price,
                 total: lineTotal,
                 composition: composition || undefined  // N'ajouter que si non vide
-            };
-            console.log('📦 Produit ajouté:', product);
-            products.push(product);
+            });
         }
     });
     
