@@ -44,11 +44,15 @@ function toggleBoxConfigurator() {
     const isChecked = boxCheckbox.checked;
     const qty = parseInt(boxQtyInput.value) || 0;
     
+    console.log('toggleBoxConfigurator called:', isChecked, qty);
+    
     if (isChecked && qty > 0) {
         boxConfigurator.style.display = 'block';
+        console.log('✅ Configurator should be visible');
     } else {
         boxConfigurator.style.display = 'none';
         resetBoxFlavors();
+        console.log('❌ Configurator hidden');
     }
 }
 
@@ -197,7 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // Forcer l'affichage du configurateur pour la Box Découverte
             if (checkbox.id === 'boxDecouverteCheckbox') {
-                setTimeout(toggleBoxConfigurator, 100);
+                setTimeout(() => {
+                    toggleBoxConfigurator();
+                    console.log('Configurator toggled after checkbox change:', boxCheckbox.checked, boxQtyInput.value);
+                }, 50);
             }
             updateOrderSummary();
         });
@@ -210,8 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 qtyInput.value = '0';
             }
             // Forcer l'affichage du configurateur pour la Box Découverte
-            if (checkbox.id === 'boxDecouverteCheckbox') {
-                setTimeout(toggleBoxConfigurator, 100);
+            if (qtyInput.id === 'boxDecouverteQty') {
+                setTimeout(() => {
+                    toggleBoxConfigurator();
+                    console.log('Configurator toggled after qty change:', boxCheckbox.checked, boxQtyInput.value);
+                }, 50);
             }
             updateOrderSummary();
         });
