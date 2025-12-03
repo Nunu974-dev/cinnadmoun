@@ -2,9 +2,21 @@ require('dotenv').config();
 const express = require('express');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Configuration de l'envoi d'emails via Hostinger
+const transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_USER || 'contact@cinnadmoun.re',
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
 
 // Middleware
 app.use(cors({
@@ -113,11 +125,89 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                 console.log('Client:', session.customer_email);
                 console.log('Montant:', session.amount_total / 100, '€');
                 
-                // Ici vous pouvez :
-                // - Envoyer un email de confirmation
-                // - Enregistrer dans une base de données
-                // - Notifier l'équipe
-                // - etc.
+                // Envoi d'emails de confirmation
+                const metadata = session.metadata;
+                const customerEmail = session.customer_details?.email || session.customer_email;
+                
+                // Email au client
+                if (customerEmail) {
+                    await transporter.sendMail({
+                        from: '"Cinnad\'moun" <contact@cinnadmoun.re>',
+                        to: customerEmail,
+                        subject: '✅ Confirmation de votre commande Cinnad\'moun',
+                        html: `
+                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                <h1 style="color: #8B4513;">Merci pour votre commande ! 🥐</h1>
+                                <p>Bonjour ${metadata.customerName || 'Client'},</p>
+                                <p>Votre paiement a bien été reçu. Voici le récapitulatif de votre commande :</p>
+                                
+                                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                    <h3 style="margin-top: 0;">📦 Détails de la commande</h3>
+                                    <p><strong>Email :</strong> ${customerEmail}</p>
+                                    <p><strong>Téléphone :</strong> ${metadata.phone || 'Non renseigné'}</p>
+                                    <p><strong>Point de retrait :</strong> ${metadata.pickupPoint || metadata.city}</p>
+                                    <p><strong>Zone :</strong> ${metadata.zone}</p>
+                                    <p><strong>Montant payé (acompte 30%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
+                                    <p><strong>Solde à régler à la livraison :</strong> ${metadata.remainingAmount || '0'}€</p>
+                                    <p><strong>Total commande :</strong> ${metadata.totalAmount || (session.amount_total / 100).toFixed(2)}€</p>
+                                </div>
+                                
+                                <p><strong>Instructions :</strong></p>
+                                <ul>
+                                    <li>Vous recevrez un SMS/email pour confirmer la date et l'heure de retrait</li>
+                                    <li>Le solde de ${metadata.remainingAmount || '0'}€ sera à régler en espèces lors du retrait</li>
+                                    <li>Pensez à apporter votre bon de commande (cet email)</li>
+                                </ul>
+                                
+                                <p style="margin-top: 30px;">À très bientôt ! 🌟</p>
+                                <p><strong>L'équipe Cinnad'moun</strong></p>
+                                <p style="font-size: 12px; color: #666;">
+                                    Contact : <a href="mailto:contact@cinnadmoun.re">contact@cinnadmoun.re</a>
+                                </p>
+                            </div>
+                        `
+                    });
+                    console.log('✅ Email envoyé au client:', customerEmail);
+                }
+                
+                // Email de notification au marchand
+                await transporter.sendMail({
+                    from: '"Notification Cinnad\'moun" <contact@cinnadmoun.re>',
+                    to: 'contact@cinnadmoun.re',
+                    subject: '🔔 Nouvelle commande reçue !',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h1 style="color: #8B4513;">Nouvelle commande 🎉</h1>
+                            
+                            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                <h3 style="margin-top: 0;">📋 Informations client</h3>
+                                <p><strong>Nom :</strong> ${metadata.customerName || 'Non renseigné'}</p>
+                                <p><strong>Email :</strong> ${customerEmail}</p>
+                                <p><strong>Téléphone :</strong> ${metadata.phone || 'Non renseigné'}</p>
+                                <p><strong>Point de retrait :</strong> ${metadata.pickupPoint || metadata.city}</p>
+                                <p><strong>Zone :</strong> ${metadata.zone}</p>
+                            </div>
+                            
+                            <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                                <h3 style="margin-top: 0;">💰 Montants</h3>
+                                <p><strong>Acompte payé (30%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
+                                <p><strong>Solde à encaisser :</strong> ${metadata.remainingAmount || '0'}€</p>
+                                <p><strong>Total commande :</strong> ${metadata.totalAmount || (session.amount_total / 100).toFixed(2)}€</p>
+                            </div>
+                            
+                            <p><strong>ID Stripe :</strong> ${session.id}</p>
+                            <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
+                            
+                            <p style="margin-top: 30px;">
+                                <a href="https://dashboard.stripe.com/payments/${session.payment_intent}" 
+                                   style="background: #8B4513; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                                    Voir dans Stripe
+                                </a>
+                            </p>
+                        </div>
+                    `
+                });
+                console.log('✅ Email de notification envoyé au marchand');
                 
                 break;
 
