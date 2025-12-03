@@ -25,6 +25,7 @@ jobs:
       run: |
         lftp -c "
         set ssl:verify-certificate no;
+        set ftp:ssl-allow no;
         open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_SERVER;
         mirror -Rev --exclude .git/ --exclude .github/ --exclude backend/ --exclude node_modules/ ./ ./public_html/;
         bye
