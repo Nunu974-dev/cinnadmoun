@@ -231,6 +231,108 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
     }
 });
 
+// Route pour envoyer la commande par email (sans paiement - mode test)
+app.post('/send-order-email', async (req, res) => {
+    try {
+        const { customerInfo, orderDetails } = req.body;
+
+        // Validation
+        if (!customerInfo || !orderDetails) {
+            return res.status(400).json({ 
+                error: 'Données manquantes' 
+            });
+        }
+
+        const customerName = `${customerInfo.firstName} ${customerInfo.lastName}`;
+        const customerEmail = customerInfo.email;
+
+        // Email au client
+        await transporter.sendMail({
+            from: '"Cinnad\'moun" <contact@cinnadmoun.re>',
+            to: customerEmail,
+            subject: '✅ Confirmation de votre commande Cinnad\'moun',
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h1 style="color: #8B4513;">Merci pour votre commande ! 🥐</h1>
+                    <p>Bonjour ${customerName},</p>
+                    <p>Votre commande a bien été enregistrée. Voici le récapitulatif :</p>
+                    
+                    <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="margin-top: 0;">📦 Détails de la commande</h3>
+                        <p><strong>Email :</strong> ${customerEmail}</p>
+                        <p><strong>Téléphone :</strong> ${customerInfo.phone}</p>
+                        <p><strong>Point de retrait :</strong> ${customerInfo.pickupPoint}</p>
+                        <p><strong>Zone :</strong> ${customerInfo.zone}</p>
+                        ${customerInfo.deliveryDate ? `<p><strong>Date de retrait :</strong> ${customerInfo.deliveryDate}</p>` : ''}
+                        ${customerInfo.message ? `<p><strong>Message :</strong> ${customerInfo.message}</p>` : ''}
+                        
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                        
+                        <p><strong>Produits :</strong> ${orderDetails.productSummary}</p>
+                        <p><strong>Sous-total :</strong> ${orderDetails.subtotal.toFixed(2)}€</p>
+                        <p><strong>Frais de livraison :</strong> ${orderDetails.deliveryFee.toFixed(2)}€</p>
+                        <p style="font-size: 18px; color: #8B4513;"><strong>Total :</strong> ${orderDetails.total.toFixed(2)}€</p>
+                        <p style="color: #666; font-size: 14px;">⚠️ Paiement à effectuer au retrait</p>
+                    </div>
+                    
+                    <p>Nous vous recontacterons pour confirmer votre commande.</p>
+                    <p>À très bientôt ! 🥐</p>
+                    <p style="color: #666; font-size: 12px; margin-top: 30px;">Cinnad'moun - Les meilleurs cinnamons rolls de La Réunion</p>
+                </div>
+            `
+        });
+
+        // Email au commerçant
+        await transporter.sendMail({
+            from: '"Cinnad\'moun" <contact@cinnadmoun.re>',
+            to: 'contact@cinnadmoun.re',
+            subject: `🛒 Nouvelle commande - ${customerName}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h1 style="color: #8B4513;">Nouvelle commande reçue ! 🛒</h1>
+                    
+                    <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="margin-top: 0;">👤 Informations client</h3>
+                        <p><strong>Nom :</strong> ${customerName}</p>
+                        <p><strong>Email :</strong> ${customerEmail}</p>
+                        <p><strong>Téléphone :</strong> ${customerInfo.phone}</p>
+                        <p><strong>Point de retrait :</strong> ${customerInfo.pickupPoint}</p>
+                        <p><strong>Zone :</strong> ${customerInfo.zone}</p>
+                        ${customerInfo.deliveryDate ? `<p><strong>Date de retrait :</strong> ${customerInfo.deliveryDate}</p>` : ''}
+                        ${customerInfo.message ? `<p><strong>Message :</strong> ${customerInfo.message}</p>` : ''}
+                        
+                        <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
+                        
+                        <h3>📦 Détails de la commande</h3>
+                        <p><strong>Produits :</strong></p>
+                        <ul>
+                            ${orderDetails.products.map(p => `<li>${p.name} (${p.option}) × ${p.quantity} = ${p.price.toFixed(2)}€</li>`).join('')}
+                        </ul>
+                        <p><strong>Sous-total :</strong> ${orderDetails.subtotal.toFixed(2)}€</p>
+                        <p><strong>Frais de livraison :</strong> ${orderDetails.deliveryFee.toFixed(2)}€</p>
+                        <p style="font-size: 18px; color: #8B4513;"><strong>TOTAL :</strong> ${orderDetails.total.toFixed(2)}€</p>
+                        <p style="color: #d9534f; font-weight: bold;">⚠️ PAIEMENT NON EFFECTUÉ - À encaisser au retrait</p>
+                    </div>
+                </div>
+            `
+        });
+
+        console.log('✅ Emails envoyés pour commande sans paiement');
+        
+        res.json({ 
+            success: true,
+            message: 'Commande envoyée par email' 
+        });
+
+    } catch (error) {
+        console.error('❌ Erreur envoi email:', error);
+        res.status(500).json({ 
+            error: 'Erreur lors de l\'envoi des emails',
+            details: error.message 
+        });
+    }
+});
+
 // Gestion des erreurs
 app.use((err, req, res, next) => {
     console.error(err.stack);
