@@ -260,7 +260,14 @@ app.post('/send-order-email', async (req, res) => {
                         
                         <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                         
-                        <p><strong>Produits :</strong> ${orderDetails.productSummary}</p>
+                        <h3>🛒 Produits commandés</h3>
+                        ${orderDetails.products ? orderDetails.products.map(item => `
+                            <div style="padding: 10px; background: white; margin: 10px 0; border-radius: 5px;">
+                                <p style="margin: 5px 0;"><strong>${item.name}</strong> - ${item.option}</p>
+                                <p style="margin: 5px 0; color: #666;">Quantité: ${item.quantity} × ${item.unitPrice.toFixed(2)}€ = <strong>${item.total.toFixed(2)}€</strong></p>
+                                ${item.composition ? `<p style="margin: 5px 0; padding: 8px; background: #fff3e0; border-left: 3px solid #ff9800; font-size: 14px;">📦 <strong>Composition:</strong> ${item.composition}</p>` : ''}
+                            </div>
+                        `).join('') : `<p>${orderDetails.productSummary}</p>`}
                         <p><strong>Sous-total :</strong> ${orderDetails.subtotal.toFixed(2)}€</p>
                         <p><strong>Frais de livraison :</strong> ${orderDetails.deliveryFee.toFixed(2)}€</p>
                         <p style="font-size: 18px; color: #8B4513;"><strong>Total :</strong> ${orderDetails.total.toFixed(2)}€</p>
@@ -296,7 +303,13 @@ app.post('/send-order-email', async (req, res) => {
                         <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                         
                         <h3>📦 Détails de la commande</h3>
-                        <p><strong>Produits :</strong> ${orderDetails.productSummary}</p>
+                        ${orderDetails.products ? orderDetails.products.map(item => `
+                            <div style="padding: 10px; background: white; margin: 10px 0; border-radius: 5px; border: 1px solid #ddd;">
+                                <p style="margin: 5px 0;"><strong>${item.name}</strong> - ${item.option}</p>
+                                <p style="margin: 5px 0; color: #666;">Quantité: ${item.quantity} × ${item.unitPrice.toFixed(2)}€ = <strong>${item.total.toFixed(2)}€</strong></p>
+                                ${item.composition ? `<p style="margin: 5px 0; padding: 8px; background: #fff3e0; border-left: 3px solid #ff9800; font-size: 14px;">📦 <strong>Composition:</strong> ${item.composition}</p>` : ''}
+                            </div>
+                        `).join('') : `<p>${orderDetails.productSummary}</p>`}
                         <p><strong>Sous-total :</strong> ${orderDetails.subtotal.toFixed(2)}€</p>
                         <p><strong>Frais de livraison :</strong> ${orderDetails.deliveryFee.toFixed(2)}€</p>
                         <p style="font-size: 18px; color: #8B4513;"><strong>TOTAL :</strong> ${orderDetails.total.toFixed(2)}€</p>

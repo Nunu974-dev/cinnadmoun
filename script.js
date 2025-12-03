@@ -532,13 +532,20 @@ function collectFormData() {
             const price = productPrices[checkboxName] || 0;
             const lineTotal = price * quantity;
             
+            // Si c'est la Box Découverte, ajouter la composition
+            let composition = '';
+            if (checkboxName === 'box-decouverte') {
+                composition = getBoxComposition();
+            }
+            
             subtotal += lineTotal;
             products.push({
                 name: productName,
                 option: optionLabel,
                 quantity: quantity,
                 unitPrice: price,
-                total: lineTotal
+                total: lineTotal,
+                composition: composition || undefined  // N'ajouter que si non vide
             });
         }
     });
