@@ -195,6 +195,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (!checkbox.checked) {
                 qtyInput.value = '0';
             }
+            // Forcer l'affichage du configurateur pour la Box Découverte
+            if (checkbox.id === 'boxDecouverteCheckbox') {
+                setTimeout(toggleBoxConfigurator, 100);
+            }
             updateOrderSummary();
         });
         
@@ -204,6 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 checkbox.checked = false;
                 qtyInput.value = '0';
+            }
+            // Forcer l'affichage du configurateur pour la Box Découverte
+            if (checkbox.id === 'boxDecouverteCheckbox') {
+                setTimeout(toggleBoxConfigurator, 100);
             }
             updateOrderSummary();
         });
