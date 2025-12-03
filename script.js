@@ -112,9 +112,11 @@ function getBoxComposition() {
         console.log('⚠️ flavorInputs not found');
         return '';
     }
+    console.log('🔍 flavorInputs trouvés:', flavorInputs.length);
     const composition = [];
     flavorInputs.forEach(input => {
         const qty = parseInt(input.value) || 0;
+        console.log(`  - ${input.dataset.flavor}: ${qty} (value="${input.value}")`);
         if (qty > 0) {
             const flavor = input.dataset.flavor;
             composition.push(`${flavor} x${qty}`);
@@ -540,7 +542,9 @@ function collectFormData() {
             // Si c'est la Box Découverte, ajouter la composition
             let composition = '';
             if (checkboxName === 'box-decouverte') {
+                console.log('📦 Box Découverte détectée, appel getBoxComposition()...');
                 composition = getBoxComposition();
+                console.log('📦 Composition reçue:', composition);
             }
             
             subtotal += lineTotal;
