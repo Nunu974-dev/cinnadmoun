@@ -18,6 +18,16 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ===========================
+// "Réveiller" le backend Render au chargement (évite 1min d'attente)
+// ===========================
+const BACKEND_URL = 'https://cinnadmoun.onrender.com';
+
+fetch(`${BACKEND_URL}/`)
+    .then(res => res.json())
+    .then(data => console.log('✅ Backend prêt:', data.status))
+    .catch(err => console.log('⚠️ Backend en cours de réveil...'));
+
+// ===========================
 // Vérifier le retour de paiement Stripe
 // ===========================
 window.addEventListener('DOMContentLoaded', () => {
@@ -350,9 +360,11 @@ function updateOrderSummary() {
             if (checkboxName === 'box-decouverte') {
                 composition = getBoxComposition();
                 
-                // Vérifier que la composition est valide (4 saveurs)
+                // Vérifier que la composition est valide (nombre de saveurs = nombre de slots)
+                const boxQty = parseInt(checkbox.closest('.option-group').querySelector('.qty-input').value) || 1;
+                const totalSlots = boxQty * 4; // 4 saveurs par box
                 const { total } = updateRemainingSlots();
-                if (total !== 4) {
+                if (total !== totalSlots) {
                     // Ne pas ajouter la box si la composition n'est pas complète
                     return;
                 }
@@ -454,7 +466,6 @@ deliveryDateInput.min = minDate.toISOString().split('T')[0];
 // Stripe Payment Integration
 // ===========================
 const stripe = Stripe(STRIPE_CONFIG.publicKey);
-const BACKEND_URL = 'https://cinnadmoun.onrender.com'; // URL du backend
 
 document.getElementById('stripePaymentBtn').addEventListener('click', async function() {
     // Valider le formulaire avant de continuer
@@ -478,7 +489,15 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
     const btn = document.getElementById('stripePaymentBtn');
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '⏳ Redirection vers Stripe...';
+    btn.innerHTML = '<span style="display: inline-block; animation: pulse 1.5s infinite;">⏳</span> Connexion sécurisée en cours...';
+    
+    // Ajouter style d'animation si pas déjà présent
+    if (!document.getElementById('pulse-animation')) {
+        const style = document.createElement('style');
+        style.id = 'pulse-animation';
+        style.textContent = '@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }';
+        document.head.appendChild(style);
+    }
     
     try {
         // Créer la session de paiement Stripe
