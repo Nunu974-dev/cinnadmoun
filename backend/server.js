@@ -50,42 +50,193 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
                 // Récupération des métadonnées
                 const metadata = session.metadata;
                 const customerEmail = session.customer_details?.email;
-                const amount = (session.amount_total / 100).toFixed(2);
+                const depositAmount = (session.amount_total / 100).toFixed(2);
                 
                 console.log('📧 Envoi emails pour:', customerEmail);
-                console.log('📦 Métadonnées:', metadata);
+                console.log('📦 Métadonnées brutes:', metadata);
                 
-                // Email au client
+                // Parser les données de commande depuis metadata
+                let orderDetails = {};
+                let customerInfo = {};
+                
+                try {
+                    // Stripe stocke les objets en JSON string dans metadata
+                    if (metadata.orderDetails) {
+                        orderDetails = JSON.parse(metadata.orderDetails);
+                    }
+                    if (metadata.customerInfo) {
+                        customerInfo = JSON.parse(metadata.customerInfo);
+                    }
+                    console.log('📦 orderDetails parsé:', orderDetails);
+                    console.log('👤 customerInfo parsé:', customerInfo);
+                } catch (parseError) {
+                    console.error('❌ Erreur parsing metadata:', parseError);
+                    // Fallback sur metadata direct
+                    customerInfo = {
+                        firstName: metadata.firstName || '',
+                        lastName: metadata.lastName || '',
+                        email: customerEmail,
+                        phone: metadata.phone || '',
+                        pickupPoint: metadata.pickupPoint || '',
+                        city: metadata.city || '',
+                        deliveryDate: metadata.deliveryDate || '',
+                        message: metadata.message || ''
+                    };
+                    orderDetails = {
+                        products: [],
+                        productSummary: metadata.productSummary || metadata.orderSummary || '',
+                        subtotal: parseFloat(metadata.subtotal || 0),
+                        deliveryFee: parseFloat(metadata.deliveryFee || 0),
+                        total: parseFloat(metadata.total || 0),
+                        deposit: parseFloat(depositAmount),
+                        balance: parseFloat(metadata.balance || 0)
+                    };
+                }
+                
+                const customerName = `${customerInfo.firstName || ''} ${customerInfo.lastName || ''}`.trim() || 'Client';
+                
+                // Email au client avec le BEAU TEMPLATE
                 if (customerEmail) {
                     try {
                         await resend.emails.send({
-                            from: 'commandes@cinnadmoun.re',
+                            from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
                             to: customerEmail,
-                            subject: '✅ Commande confirmée - Cinnad\'moun',
+                            subject: '✅ Confirmation de votre commande Cinnad\'moun',
                             html: `
-                                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                    <h1 style="color: #8B4513;">Merci pour votre commande !</h1>
-                                    <p>Bonjour ${metadata?.customerName || 'Client'},</p>
-                                    <p>Votre commande a bien été enregistrée et le paiement de <strong>${amount}€</strong> a été confirmé.</p>
-                                    
-                                    <h2 style="color: #8B4513;">Détails de votre commande</h2>
-                                    <ul>
-                                        <li><strong>Montant:</strong> ${amount}€</li>
-                                        ${metadata?.orderSummary ? `<li><strong>Produits:</strong> ${metadata.orderSummary}</li>` : ''}
-                                        ${metadata?.deliveryDate ? `<li><strong>Date de livraison:</strong> ${metadata.deliveryDate}</li>` : ''}
-                                    </ul>
-                                    
-                                    <h2 style="color: #8B4513;">Informations de livraison</h2>
-                                    <p>
-                                        ${metadata?.customerName || ''}<br>
-                                        ${metadata?.phone || ''}<br>
-                                        ${metadata?.address || ''}<br>
-                                        ${metadata?.postalCode || ''} ${metadata?.city || ''}
-                                    </p>
-                                    
-                                    <p style="margin-top: 30px;">Nous vous contacterons prochainement pour confirmer la livraison.</p>
-                                    <p style="color: #666;">À bientôt,<br>L'équipe Cinnad'moun</p>
-                                </div>
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                </head>
+                                <body style="margin: 0; padding: 0; background-color: #f9f6f1; font-family: 'Georgia', serif;">
+                                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+                                        <!-- Header avec logo -->
+                                        <div style="background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%); padding: 40px 20px; text-align: center;">
+                                            <img src="https://cinnadmoun.re/img/Logo.png" alt="Cinnad'moun" style="max-width: 150px; height: auto; margin-bottom: 15px;">
+                                            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 300; letter-spacing: 2px;">Merci pour votre commande !</h1>
+                                        </div>
+                                        
+                                        <!-- Contenu principal -->
+                                        <div style="padding: 40px 30px;">
+                                            <p style="font-size: 16px; color: #5D4037; line-height: 1.6; margin-bottom: 20px;">
+                                                Bonjour <strong>${customerName}</strong>,
+                                            </p>
+                                            
+                                            <p style="font-size: 15px; color: #5D4037; line-height: 1.6; margin-bottom: 30px;">
+                                                Votre commande a bien été enregistrée et le paiement de <strong>${depositAmount}€</strong> (acompte 30%) a été confirmé ! 🎉<br>
+                                                Nos artisans pâtissiers préparent avec soin vos délicieux cinnamon rolls. 🥐
+                                            </p>
+                                            
+                                            <!-- Informations client -->
+                                            <div style="background: #FFF8E1; border-left: 4px solid #D4A574; padding: 20px; margin-bottom: 25px; border-radius: 4px;">
+                                                <h3 style="color: #8B4513; margin: 0 0 15px 0; font-size: 18px;">📍 Vos informations</h3>
+                                                <table style="width: 100%; border-collapse: collapse;">
+                                                    <tr>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;"><strong>Email :</strong></td>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;">${customerEmail}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;"><strong>Téléphone :</strong></td>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;">${customerInfo.phone || 'N/A'}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;"><strong>Point de retrait :</strong></td>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;">${customerInfo.pickupPoint || 'N/A'}</td>
+                                                    </tr>
+                                                    ${customerInfo.deliveryDate ? `
+                                                    <tr>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;"><strong>Date de retrait :</strong></td>
+                                                        <td style="padding: 5px 0; color: #5D4037; font-size: 14px;">${customerInfo.deliveryDate}</td>
+                                                    </tr>` : ''}
+                                                </table>
+                                            </div>
+                                            
+                                            <!-- Produits commandés -->
+                                            <div style="margin-bottom: 25px;">
+                                                <h3 style="color: #8B4513; margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #D4A574; padding-bottom: 10px;">🥐 Vos créations artisanales</h3>
+                                                ${orderDetails.products && orderDetails.products.length > 0 ? orderDetails.products.map(item => `
+                                                    <div style="background: #FAFAFA; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #E0E0E0;">
+                                                        <p style="margin: 0 0 8px 0; color: #8B4513; font-size: 16px; font-weight: bold;">${item.name}</p>
+                                                        <p style="margin: 0 0 5px 0; color: #666; font-size: 14px;">${item.option}</p>
+                                                        <p style="margin: 5px 0; color: #5D4037; font-size: 14px;">
+                                                            <span style="color: #999;">Quantité :</span> ${item.quantity} × ${item.unitPrice.toFixed(2)}€ = 
+                                                            <strong style="color: #8B4513;">${item.total.toFixed(2)}€</strong>
+                                                        </p>
+                                                        ${item.composition ? `
+                                                        <div style="margin-top: 10px; padding: 10px; background: #FFF3E0; border-left: 3px solid #FF9800; border-radius: 4px;">
+                                                            <p style="margin: 0; font-size: 13px; color: #E65100;">
+                                                                <strong>📦 Composition personnalisée :</strong> ${item.composition}
+                                                            </p>
+                                                        </div>` : ''}
+                                                    </div>
+                                                `).join('') : `<p style="color: #5D4037;">${orderDetails.productSummary || 'Produits commandés'}</p>`}
+                                            </div>
+                                            
+                                            <!-- Récapitulatif prix -->
+                                            <div style="background: #F5F5F5; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                                                <table style="width: 100%; border-collapse: collapse;">
+                                                    <tr>
+                                                        <td style="padding: 8px 0; color: #5D4037; font-size: 15px;">Sous-total produits :</td>
+                                                        <td style="padding: 8px 0; color: #5D4037; font-size: 15px; text-align: right;">${(orderDetails.subtotal || 0).toFixed(2)}€</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px 0; color: #5D4037; font-size: 15px;">Frais de livraison :</td>
+                                                        <td style="padding: 8px 0; color: #5D4037; font-size: 15px; text-align: right;">${orderDetails.deliveryFee === 0 ? '<span style="color: #4CAF50;">GRATUIT ✨</span>' : (orderDetails.deliveryFee || 0).toFixed(2) + '€'}</td>
+                                                    </tr>
+                                                    <tr style="border-top: 2px solid #D4A574;">
+                                                        <td style="padding: 12px 0 0 0; color: #8B4513; font-size: 18px; font-weight: bold;">TOTAL COMMANDE :</td>
+                                                        <td style="padding: 12px 0 0 0; color: #8B4513; font-size: 20px; font-weight: bold; text-align: right;">${(orderDetails.total || 0).toFixed(2)}€</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px 0; color: #4CAF50; font-size: 15px;">✅ Acompte payé (30%) :</td>
+                                                        <td style="padding: 8px 0; color: #4CAF50; font-size: 15px; text-align: right;">${depositAmount}€</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding: 8px 0; color: #E65100; font-size: 15px; font-weight: bold;">💰 Solde à régler au retrait :</td>
+                                                        <td style="padding: 8px 0; color: #E65100; font-size: 15px; font-weight: bold; text-align: right;">${(orderDetails.balance || 0).toFixed(2)}€</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            
+                                            ${customerInfo.message ? `
+                                            <div style="background: #E8F5E9; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50; margin-bottom: 25px;">
+                                                <p style="margin: 0; color: #2E7D32; font-size: 14px;"><strong>💬 Votre message :</strong></p>
+                                                <p style="margin: 5px 0 0 0; color: #5D4037; font-size: 14px;">${customerInfo.message}</p>
+                                            </div>` : ''}
+                                            
+                                            <!-- Instructions -->
+                                            <div style="background: #E3F2FD; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
+                                                <h3 style="color: #1565C0; margin: 0 0 12px 0; font-size: 16px;">📋 Prochaines étapes</h3>
+                                                <ul style="margin: 0; padding-left: 20px; color: #5D4037; font-size: 14px; line-height: 1.8;">
+                                                    <li>Nous vous recontacterons par SMS/email pour confirmer la date et l'heure de retrait</li>
+                                                    <li>Préparez le solde de <strong>${(orderDetails.balance || 0).toFixed(2)}€</strong> en espèces pour le retrait</li>
+                                                    <li>Conservez cet email comme preuve de commande</li>
+                                                </ul>
+                                            </div>
+                                            
+                                            <p style="font-size: 15px; color: #5D4037; line-height: 1.6; text-align: center; margin: 30px 0;">
+                                                Nous avons hâte de vous faire découvrir nos créations ! 🌟
+                                            </p>
+                                        </div>
+                                        
+                                        <!-- Footer -->
+                                        <div style="background: #3E2723; padding: 30px 20px; text-align: center;">
+                                            <p style="color: #D4A574; font-size: 18px; margin: 0 0 10px 0; font-weight: bold;">L'équipe Cinnad'moun</p>
+                                            <p style="color: #BCAAA4; font-size: 13px; margin: 0 0 15px 0;">Les meilleurs cinnamon rolls de La Réunion 🌺</p>
+                                            <p style="color: #BCAAA4; font-size: 12px; margin: 5px 0;">
+                                                📧 <a href="mailto:contact@cinnadmoun.re" style="color: #D4A574; text-decoration: none;">contact@cinnadmoun.re</a>
+                                            </p>
+                                            <p style="color: #BCAAA4; font-size: 12px; margin: 5px 0;">
+                                                📱 +262 692 37 72 43
+                                            </p>
+                                            <p style="color: #8D6E63; font-size: 11px; margin: 20px 0 0 0;">
+                                                © 2025 Cinnad'moun - Tous droits réservés
+                                            </p>
+                                        </div>
+                                    </div>
+                                </body>
+                                </html>
                             `
                         });
                         console.log('✅ Email client envoyé à:', customerEmail);
@@ -94,39 +245,54 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
                     }
                 }
                 
-                // Email au commerçant
+                // Email au commerçant (vous gardez le simple)
                 try {
                     await resend.emails.send({
-                        from: 'commandes@cinnadmoun.re',
+                        from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
                         to: 'commandes@cinnadmoun.re',
-                        subject: '🔔 Nouvelle commande - ' + (metadata?.customerName || 'Client'),
+                        subject: '🔔 Nouvelle commande - ' + customerName,
                         html: `
                             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                <h1 style="color: #8B4513;">Nouvelle commande reçue !</h1>
+                                <h1 style="color: #8B4513;">Nouvelle commande reçue ! 🎉</h1>
                                 
                                 <h2>Informations client</h2>
                                 <ul>
-                                    <li><strong>Nom:</strong> ${metadata?.customerName || 'N/A'}</li>
-                                    <li><strong>Email:</strong> ${customerEmail || 'N/A'}</li>
-                                    <li><strong>Téléphone:</strong> ${metadata?.phone || 'N/A'}</li>
+                                    <li><strong>Nom:</strong> ${customerName}</li>
+                                    <li><strong>Email:</strong> ${customerEmail}</li>
+                                    <li><strong>Téléphone:</strong> ${customerInfo.phone || 'N/A'}</li>
+                                    <li><strong>Point de retrait:</strong> ${customerInfo.pickupPoint || 'N/A'}</li>
+                                    <li><strong>Date souhaitée:</strong> ${customerInfo.deliveryDate || 'N/A'}</li>
                                 </ul>
-                                
-                                <h2>Adresse de livraison</h2>
-                                <p>
-                                    ${metadata?.address || 'N/A'}<br>
-                                    ${metadata?.postalCode || ''} ${metadata?.city || ''}<br>
-                                    ${metadata?.deliveryInstructions ? `<br><em>Instructions: ${metadata.deliveryInstructions}</em>` : ''}
-                                </p>
                                 
                                 <h2>Détails de la commande</h2>
+                                ${orderDetails.products && orderDetails.products.length > 0 ? 
+                                    orderDetails.products.map(item => `
+                                        <div style="background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px;">
+                                            <strong>${item.name}</strong> - ${item.option}<br>
+                                            Quantité: ${item.quantity} × ${item.unitPrice.toFixed(2)}€ = <strong>${item.total.toFixed(2)}€</strong>
+                                            ${item.composition ? `<br><em>🎨 Composition: ${item.composition}</em>` : ''}
+                                        </div>
+                                    `).join('') 
+                                    : `<p>${orderDetails.productSummary}</p>`}
+                                
+                                <h2>Récapitulatif</h2>
                                 <ul>
-                                    <li><strong>Montant total:</strong> ${amount}€</li>
-                                    ${metadata?.orderSummary ? `<li><strong>Produits:</strong> ${metadata.orderSummary}</li>` : ''}
-                                    ${metadata?.deliveryDate ? `<li><strong>Date souhaitée:</strong> ${metadata.deliveryDate}</li>` : ''}
+                                    <li>Sous-total: ${(orderDetails.subtotal || 0).toFixed(2)}€</li>
+                                    <li>Livraison: ${(orderDetails.deliveryFee || 0).toFixed(2)}€</li>
+                                    <li><strong>Total: ${(orderDetails.total || 0).toFixed(2)}€</strong></li>
+                                    <li style="color: #4CAF50;">✅ Acompte payé: ${depositAmount}€</li>
+                                    <li style="color: #E65100;"><strong>💰 Solde à encaisser: ${(orderDetails.balance || 0).toFixed(2)}€</strong></li>
                                 </ul>
                                 
+                                ${customerInfo.message ? `
+                                <div style="background: #E8F5E9; padding: 15px; margin: 20px 0; border-radius: 5px;">
+                                    <strong>💬 Message du client:</strong><br>
+                                    ${customerInfo.message}
+                                </div>` : ''}
+                                
                                 <p style="margin-top: 30px; padding: 15px; background: #f0f0f0; border-radius: 5px;">
-                                    <strong>ID Session Stripe:</strong> ${session.id}
+                                    <strong>ID Session Stripe:</strong> ${session.id}<br>
+                                    <strong>Date:</strong> ${new Date().toLocaleString('fr-FR')}
                                 </p>
                             </div>
                         `
@@ -199,17 +365,19 @@ app.post('/create-checkout-session', async (req, res) => {
             ],
             customer_email: customerInfo.email,
             metadata: {
+                // Stocker les objets complets en JSON pour le webhook
+                customerInfo: JSON.stringify(customerInfo),
+                orderDetails: JSON.stringify(orderDetails),
+                // Aussi en format plat pour visualisation dans Stripe Dashboard
                 customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
                 phone: customerInfo.phone,
                 pickupPoint: customerInfo.pickupPoint,
-                city: customerInfo.city,
                 zone: customerInfo.zone,
-                deliveryDate: customerInfo.deliveryDate,
-                orderTotal: orderDetails.total,
-                depositAmount: orderDetails.deposit,
-                balanceAmount: orderDetails.balance,
-                products: JSON.stringify(orderDetails.products),
-                message: customerInfo.message || 'Aucune remarque'
+                deliveryDate: customerInfo.deliveryDate || '',
+                orderTotal: orderDetails.total.toString(),
+                depositAmount: orderDetails.deposit.toString(),
+                balanceAmount: orderDetails.balance.toString(),
+                productSummary: orderDetails.productSummary
             },
             success_url: successUrl,
             cancel_url: cancelUrl,
