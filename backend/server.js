@@ -10,13 +10,146 @@ const PORT = process.env.PORT || 3000;
 // Configuration Resend pour l'envoi d'emails
 const resend = new Resend(process.env.RESEND_API_KEY || 're_cpsrDLvY_Pc3euk9FATXwEtxxMp2r5Hzw');
 
-// Middleware
+// Middleware CORS (toujours en premier)
 app.use(cors({
     origin: ['https://cinnadmoun.re', 'http://localhost:5500', 'http://127.0.0.1:5500'],
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// ⚠️ IMPORTANT: Route webhook AVANT express.json()
+// Stripe a besoin du body RAW pour vérifier la signature
+app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    const sig = req.headers['stripe-signature'];
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    
+    if (!webhookSecret) {
+        console.error('❌ STRIPE_WEBHOOK_SECRET non défini !');
+        return res.status(500).send('Webhook secret non configuré');
+    }
+    
+    let event;
+    
+    try {
+        // Vérification de la signature avec le body RAW
+        event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+        console.log('✅ Webhook vérifié:', event.type);
+    } catch (err) {
+        console.error('❌ Erreur vérification webhook:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    
+    // Traitement de l'événement
+    try {
+        switch (event.type) {
+            case 'checkout.session.completed':
+                const session = event.data.object;
+                console.log('🎉 Paiement réussi:', session.id);
+                
+                // Récupération des métadonnées
+                const metadata = session.metadata;
+                const customerEmail = session.customer_details?.email;
+                const amount = (session.amount_total / 100).toFixed(2);
+                
+                console.log('📧 Envoi emails pour:', customerEmail);
+                console.log('📦 Métadonnées:', metadata);
+                
+                // Email au client
+                if (customerEmail) {
+                    try {
+                        await resend.emails.send({
+                            from: 'commandes@cinnadmoun.re',
+                            to: customerEmail,
+                            subject: '✅ Commande confirmée - Cinnad\'moun',
+                            html: `
+                                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                    <h1 style="color: #8B4513;">Merci pour votre commande !</h1>
+                                    <p>Bonjour ${metadata?.customerName || 'Client'},</p>
+                                    <p>Votre commande a bien été enregistrée et le paiement de <strong>${amount}€</strong> a été confirmé.</p>
+                                    
+                                    <h2 style="color: #8B4513;">Détails de votre commande</h2>
+                                    <ul>
+                                        <li><strong>Montant:</strong> ${amount}€</li>
+                                        ${metadata?.orderSummary ? `<li><strong>Produits:</strong> ${metadata.orderSummary}</li>` : ''}
+                                        ${metadata?.deliveryDate ? `<li><strong>Date de livraison:</strong> ${metadata.deliveryDate}</li>` : ''}
+                                    </ul>
+                                    
+                                    <h2 style="color: #8B4513;">Informations de livraison</h2>
+                                    <p>
+                                        ${metadata?.customerName || ''}<br>
+                                        ${metadata?.phone || ''}<br>
+                                        ${metadata?.address || ''}<br>
+                                        ${metadata?.postalCode || ''} ${metadata?.city || ''}
+                                    </p>
+                                    
+                                    <p style="margin-top: 30px;">Nous vous contacterons prochainement pour confirmer la livraison.</p>
+                                    <p style="color: #666;">À bientôt,<br>L'équipe Cinnad'moun</p>
+                                </div>
+                            `
+                        });
+                        console.log('✅ Email client envoyé à:', customerEmail);
+                    } catch (emailError) {
+                        console.error('❌ Erreur email client:', emailError);
+                    }
+                }
+                
+                // Email au commerçant
+                try {
+                    await resend.emails.send({
+                        from: 'commandes@cinnadmoun.re',
+                        to: 'commandes@cinnadmoun.re',
+                        subject: '🔔 Nouvelle commande - ' + (metadata?.customerName || 'Client'),
+                        html: `
+                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                                <h1 style="color: #8B4513;">Nouvelle commande reçue !</h1>
+                                
+                                <h2>Informations client</h2>
+                                <ul>
+                                    <li><strong>Nom:</strong> ${metadata?.customerName || 'N/A'}</li>
+                                    <li><strong>Email:</strong> ${customerEmail || 'N/A'}</li>
+                                    <li><strong>Téléphone:</strong> ${metadata?.phone || 'N/A'}</li>
+                                </ul>
+                                
+                                <h2>Adresse de livraison</h2>
+                                <p>
+                                    ${metadata?.address || 'N/A'}<br>
+                                    ${metadata?.postalCode || ''} ${metadata?.city || ''}<br>
+                                    ${metadata?.deliveryInstructions ? `<br><em>Instructions: ${metadata.deliveryInstructions}</em>` : ''}
+                                </p>
+                                
+                                <h2>Détails de la commande</h2>
+                                <ul>
+                                    <li><strong>Montant total:</strong> ${amount}€</li>
+                                    ${metadata?.orderSummary ? `<li><strong>Produits:</strong> ${metadata.orderSummary}</li>` : ''}
+                                    ${metadata?.deliveryDate ? `<li><strong>Date souhaitée:</strong> ${metadata.deliveryDate}</li>` : ''}
+                                </ul>
+                                
+                                <p style="margin-top: 30px; padding: 15px; background: #f0f0f0; border-radius: 5px;">
+                                    <strong>ID Session Stripe:</strong> ${session.id}
+                                </p>
+                            </div>
+                        `
+                    });
+                    console.log('✅ Email commerçant envoyé');
+                } catch (emailError) {
+                    console.error('❌ Erreur email commerçant:', emailError);
+                }
+                
+                break;
+            
+            default:
+                console.log('ℹ️ Événement non géré:', event.type);
+        }
+        
+        res.json({ received: true });
+    } catch (err) {
+        console.error('❌ Erreur traitement webhook:', err);
+        res.status(500).json({ error: 'Erreur traitement' });
+    }
+});
+
+// Maintenant on peut parser JSON pour les autres routes
 app.use(express.json());
 
 // Route de test
@@ -95,134 +228,6 @@ app.post('/create-checkout-session', async (req, res) => {
             error: 'Erreur lors de la création de la session de paiement',
             details: error.message 
         });
-    }
-});
-
-// Webhook Stripe (pour recevoir les confirmations de paiement)
-app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) => {
-    const sig = req.headers['stripe-signature'];
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-    let event;
-
-    try {
-        if (webhookSecret) {
-            event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-        } else {
-            event = req.body;
-        }
-
-        // Gérer les événements
-        switch (event.type) {
-            case 'checkout.session.completed':
-                const session = event.data.object;
-                console.log('🎉 Paiement réussi:', session.id);
-                console.log('Client:', session.customer_email);
-                console.log('Montant:', session.amount_total / 100, '€');
-                
-                // Envoi d'emails de confirmation
-                const metadata = session.metadata;
-                const customerEmail = session.customer_details?.email || session.customer_email;
-                
-                // Email au client
-                if (customerEmail) {
-                    await resend.emails.send({
-                        from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
-                        to: customerEmail,
-                        subject: '✅ Confirmation de votre commande Cinnad\'moun',
-                        html: `
-                            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                                <h1 style="color: #8B4513;">Merci pour votre commande ! 🥐</h1>
-                                <p>Bonjour ${metadata.customerName || 'Client'},</p>
-                                <p>Votre paiement a bien été reçu. Voici le récapitulatif de votre commande :</p>
-                                
-                                <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                                    <h3 style="margin-top: 0;">📦 Détails de la commande</h3>
-                                    <p><strong>Email :</strong> ${customerEmail}</p>
-                                    <p><strong>Téléphone :</strong> ${metadata.phone || 'Non renseigné'}</p>
-                                    <p><strong>Point de retrait :</strong> ${metadata.pickupPoint || metadata.city}</p>
-                                    <p><strong>Zone :</strong> ${metadata.zone}</p>
-                                    <p><strong>Montant payé (acompte 20%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
-                                    <p><strong>Solde à régler à la livraison :</strong> ${metadata.balanceAmount || '0'}€</p>
-                                    <p><strong>Total commande :</strong> ${metadata.orderTotal || (session.amount_total / 100).toFixed(2)}€</p>
-                                </div>
-                                
-                                <p><strong>Instructions :</strong></p>
-                                <ul>
-                                    <li>Vous recevrez un SMS/email pour confirmer la date et l'heure de retrait</li>
-                                    <li>Le solde de ${metadata.balanceAmount || '0'}€ sera à régler en espèces lors du retrait</li>
-                                    <li>Pensez à apporter votre bon de commande (cet email)</li>
-                                </ul>
-                                
-                                <p style="margin-top: 30px;">À très bientôt ! 🌟</p>
-                                <p><strong>L'équipe Cinnad'moun</strong></p>
-                                <p style="font-size: 12px; color: #666;">
-                                    Contact : <a href="mailto:contact@cinnadmoun.re">contact@cinnadmoun.re</a>
-                                </p>
-                            </div>
-                        `
-                    });
-                    console.log('✅ Email envoyé au client:', customerEmail);
-                }
-                
-                // Email de notification au marchand
-                await resend.emails.send({
-                    from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
-                    to: 'commandes@cinnadmoun.re',
-                    subject: '🔔 Nouvelle commande reçue !',
-                    html: `
-                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                            <h1 style="color: #8B4513;">Nouvelle commande 🎉</h1>
-                            
-                            <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                                <h3 style="margin-top: 0;">📋 Informations client</h3>
-                                <p><strong>Nom :</strong> ${metadata.customerName || 'Non renseigné'}</p>
-                                <p><strong>Email :</strong> ${customerEmail}</p>
-                                <p><strong>Téléphone :</strong> ${metadata.phone || 'Non renseigné'}</p>
-                                <p><strong>Point de retrait :</strong> ${metadata.pickupPoint || metadata.city}</p>
-                                <p><strong>Zone :</strong> ${metadata.zone}</p>
-                            </div>
-                            
-                            <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                                <h3 style="margin-top: 0;">💰 Montants</h3>
-                                <p><strong>Acompte payé (20%) :</strong> ${(session.amount_total / 100).toFixed(2)}€</p>
-                                <p><strong>Solde à encaisser :</strong> ${metadata.balanceAmount || '0'}€</p>
-                                <p><strong>Total commande :</strong> ${metadata.orderTotal || (session.amount_total / 100).toFixed(2)}€</p>
-                            </div>
-                            
-                            <p><strong>ID Stripe :</strong> ${session.id}</p>
-                            <p><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</p>
-                            
-                            <p style="margin-top: 30px;">
-                                <a href="https://dashboard.stripe.com/payments/${session.payment_intent}" 
-                                   style="background: #8B4513; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                                    Voir dans Stripe
-                                </a>
-                            </p>
-                        </div>
-                    `
-                });
-                console.log('✅ Email de notification envoyé au marchand');
-                
-                break;
-
-            case 'checkout.session.expired':
-                console.log('⏱️ Session expirée:', event.data.object.id);
-                break;
-
-            case 'payment_intent.payment_failed':
-                console.log('❌ Paiement échoué:', event.data.object.id);
-                break;
-
-            default:
-                console.log(`Event non géré: ${event.type}`);
-        }
-
-        res.json({ received: true });
-
-    } catch (err) {
-        console.error('❌ Erreur webhook:', err.message);
-        res.status(400).send(`Webhook Error: ${err.message}`);
     }
 });
 
