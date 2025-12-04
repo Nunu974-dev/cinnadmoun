@@ -352,6 +352,18 @@ app.post('/create-checkout-session', async (req, res) => {
 
         console.log(`⏱️ Avant appel Stripe API: ${Date.now() - startTime}ms`);
 
+        // Préparer les métadonnées (limitation Stripe: 500 caractères par clé)
+        const customerInfoStr = JSON.stringify(customerInfo);
+        const orderDetailsStr = JSON.stringify(orderDetails);
+        
+        // Validation: vérifier que les métadonnées ne dépassent pas la limite Stripe
+        if (customerInfoStr.length > 500) {
+            console.warn('⚠️ customerInfo trop long, troncature nécessaire');
+        }
+        if (orderDetailsStr.length > 500) {
+            console.warn('⚠️ orderDetails trop long, troncature nécessaire');
+        }
+
         // Créer la session Stripe Checkout
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -372,9 +384,9 @@ app.post('/create-checkout-session', async (req, res) => {
             ],
             customer_email: customerInfo.email,
             metadata: {
-                // Stocker les objets complets en JSON pour le webhook
-                customerInfo: JSON.stringify(customerInfo),
-                orderDetails: JSON.stringify(orderDetails),
+                // Stocker les objets complets en JSON pour le webhook (tronqués si nécessaire)
+                customerInfo: customerInfoStr.substring(0, 500),
+                orderDetails: orderDetailsStr.substring(0, 500),
                 // Aussi en format plat pour visualisation dans Stripe Dashboard
                 customerName: `${customerInfo.firstName} ${customerInfo.lastName}`,
                 phone: customerInfo.phone,
@@ -384,7 +396,7 @@ app.post('/create-checkout-session', async (req, res) => {
                 orderTotal: orderDetails.total.toString(),
                 depositAmount: orderDetails.deposit.toString(),
                 balanceAmount: orderDetails.balance.toString(),
-                productSummary: orderDetails.productSummary
+                productSummary: orderDetails.productSummary.substring(0, 450) // Limite à 450 pour sécurité
             },
             success_url: successUrl,
             cancel_url: cancelUrl,
@@ -399,7 +411,20 @@ app.post('/create-checkout-session', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Erreur création session:', error);
+        // Distinguer les types d'erreurs
+        if (error.type === 'StripeInvalidRequestError') {
+            console.error('❌ Erreur Stripe (paramètres invalides):', error.message);
+            console.error('   → Paramètre:', error.param);
+            console.error(`⏱️ Temps écoulé: ${Date.now() - startTime}ms`);
+            return res.status(400).json({ 
+                error: 'Paramètres de paiement invalides',
+                details: error.message,
+                param: error.param
+            });
+        }
+        
+        // Autres erreurs (réseau, serveur, etc.)
+        console.error('❌ Erreur création session:', error.message);
         console.error(`⏱️ Temps écoulé avant erreur: ${Date.now() - startTime}ms`);
         res.status(500).json({ 
             error: 'Erreur lors de la création de la session de paiement',
