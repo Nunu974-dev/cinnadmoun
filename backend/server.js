@@ -12,7 +12,10 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_cpsrDLvY_Pc3euk9FATX
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || '*'
+    origin: ['https://cinnadmoun.re', 'http://localhost:5500', 'http://127.0.0.1:5500'],
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
