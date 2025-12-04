@@ -165,7 +165,7 @@ app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) =
                 // Email de notification au marchand
                 await resend.emails.send({
                     from: 'Cinnad\'moun <commandes@cinnadmoun.re>',
-                    to: 'contact@cinnadmoun.re',
+                    to: 'commandes@cinnadmoun.re',
                     subject: '🔔 Nouvelle commande reçue !',
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
