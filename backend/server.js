@@ -329,6 +329,9 @@ app.get('/', (req, res) => {
 
 // Route pour créer une session de paiement Stripe
 app.post('/create-checkout-session', async (req, res) => {
+    const startTime = Date.now();
+    console.log('🕐 Début create-checkout-session');
+    
     try {
         const { 
             amount, 
@@ -338,12 +341,16 @@ app.post('/create-checkout-session', async (req, res) => {
             cancelUrl 
         } = req.body;
 
+        console.log(`⏱️ Parsing body: ${Date.now() - startTime}ms`);
+
         // Validation
         if (!amount || amount < 50) { // Minimum 0.50€ (50 centimes)
             return res.status(400).json({ 
                 error: 'Montant invalide. Minimum 0,50€' 
             });
         }
+
+        console.log(`⏱️ Avant appel Stripe API: ${Date.now() - startTime}ms`);
 
         // Créer la session Stripe Checkout
         const session = await stripe.checkout.sessions.create({
@@ -383,7 +390,8 @@ app.post('/create-checkout-session', async (req, res) => {
             cancel_url: cancelUrl,
         });
 
-        console.log(`✅ Session créée pour ${customerInfo.email} - ${amount/100}€`);
+        console.log(`⏱️ Après appel Stripe API: ${Date.now() - startTime}ms`);
+        console.log(`✅ Session créée pour ${customerInfo.email} - ${amount/100}€ | Total: ${Date.now() - startTime}ms`);
 
         res.json({ 
             sessionId: session.id,
@@ -392,6 +400,7 @@ app.post('/create-checkout-session', async (req, res) => {
 
     } catch (error) {
         console.error('❌ Erreur création session:', error);
+        console.error(`⏱️ Temps écoulé avant erreur: ${Date.now() - startTime}ms`);
         res.status(500).json({ 
             error: 'Erreur lors de la création de la session de paiement',
             details: error.message 

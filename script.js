@@ -499,8 +499,12 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         document.head.appendChild(style);
     }
     
+    const startTime = Date.now();
+    console.log('🕐 Début création session Stripe');
+    
     try {
         // Créer la session de paiement Stripe
+        console.log('⏱️ Envoi requête au backend...');
         const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
             method: 'POST',
             headers: {
@@ -533,15 +537,20 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
             })
         });
 
+        console.log(`⏱️ Réponse reçue du backend: ${Date.now() - startTime}ms`);
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Erreur lors de la création de la session de paiement');
         }
 
         const { sessionId } = await response.json();
+        console.log(`⏱️ Session ID reçu: ${Date.now() - startTime}ms`);
         
         // Rediriger vers Stripe Checkout
+        console.log('⏱️ Redirection vers Stripe...');
         const result = await stripe.redirectToCheckout({ sessionId });
+        console.log(`⏱️ Total avant redirection: ${Date.now() - startTime}ms`);
         
         if (result.error) {
             throw new Error(result.error.message);
