@@ -1737,7 +1737,8 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     }
     
     .hero-background video {
-        object-position: center 15%;
+        object-fit: contain;
+        object-position: center;
     }
     
     .about-section,
