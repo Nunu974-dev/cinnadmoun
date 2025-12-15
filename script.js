@@ -9,6 +9,24 @@ menuToggle.addEventListener('click', () => {
     menuToggle.classList.toggle('active');
 });
 
+// ===========================
+// Force video play on mobile
+// ===========================
+const heroVideo = document.querySelector('.hero-video');
+if (heroVideo) {
+    // Tenter de lancer la vidéo immédiatement
+    heroVideo.play().catch(() => {
+        // Si ça échoue, attendre l'interaction utilisateur
+        const playOnScroll = () => {
+            heroVideo.play();
+            window.removeEventListener('scroll', playOnScroll);
+            window.removeEventListener('touchstart', playOnScroll);
+        };
+        window.addEventListener('scroll', playOnScroll);
+        window.addEventListener('touchstart', playOnScroll);
+    });
+}
+
 // Close menu when clicking on a link
 document.querySelectorAll('.nav-links a').forEach(link => {
     link.addEventListener('click', () => {
