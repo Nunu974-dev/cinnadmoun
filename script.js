@@ -986,7 +986,7 @@ const footerInfoData = {
             <h3>📍 Selon votre zone :</h3>
             <ul>
                 <li><strong>Saint-Pierre / Le Tampon / Saint-Joseph :</strong> Livraison GRATUITE ✨</li>
-                <li><strong>Zone Ouest</strong> (Saint-Paul, Saint-Leu, Le Port) : +3€</li>
+                <li><strong>Zone Ouest</strong> (Saint-Paul, Saint-Leu, Le Port) : +5€</li>
                 <li><strong>Zone Nord</strong> (Saint-Denis, Sainte-Marie, Sainte-Suzanne) : +7€</li>
                 <li style="color: #999; text-decoration: line-through;"><strong>Zone Est</strong> (Saint-Benoît, Saint-André, Bras-Panon) : Prochainement disponible ⏳</li>
             </ul>
@@ -1100,10 +1100,15 @@ const footerInfoData = {
             <p>Les prix sont indiqués en euros TTC. Ils peuvent être modifiés à tout moment sans préavis.</p>
             
             <h4>Article 3 - Paiement</h4>
-            <p>Le paiement s'effectue au moment du retrait ou de la livraison.</p>
+            <p><strong>Un acompte de 20% est demandé</strong> au moment de la commande pour sécuriser votre réservation. Le solde restant (80%) s'effectue au moment du retrait ou de la livraison.</p>
             
             <h4>Article 4 - Annulation</h4>
-            <p>Toute annulation doit être effectuée au moins 24h avant la date prévue. Passé ce délai, la commande sera facturée à 50%.</p>
+            <p><strong>Conditions d'annulation :</strong></p>
+            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                <li><strong>Annulation au moins 48h avant la livraison :</strong> L'acompte de 20% est conservé par Cinnad'moun.</li>
+                <li><strong>Annulation entre 24h et 48h avant la livraison :</strong> 50% du montant total de la commande sera facturé.</li>
+                <li><strong>Annulation moins de 24h avant la livraison :</strong> 100% du montant de la commande sera facturé.</li>
+            </ul>
             
             <h4>Article 5 - Réclamations</h4>
             <p>Pour toute réclamation, contactez-nous dans les 48h suivant la réception de votre commande.</p>
@@ -1125,6 +1130,11 @@ document.querySelectorAll('[data-info]').forEach(link => {
             `;
             footerMain.classList.add('slide-out');
             footerInfoPanel.classList.add('active');
+            
+            // Scroll vers le haut du panel sur mobile
+            setTimeout(() => {
+                footerInfoPanel.scrollTop = 0;
+            }, 100);
         }
     });
 });

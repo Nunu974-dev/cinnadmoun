@@ -1118,11 +1118,15 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     left: 0;
     right: 0;
     bottom: 0;
-    padding-top: 0;
+    padding-top: 1rem;
+    padding-bottom: 3rem;
     transform: translateX(100%);
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
-    padding-bottom: 2rem;
+    -webkit-overflow-scrolling: touch;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .footer-info-panel::-webkit-scrollbar {
@@ -1159,8 +1163,26 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
     transition: var(--transition);
+    flex-shrink: 0;
+}
+
+/* Sur mobile, bouton retour fixe en haut */
+@media (max-width: 768px) {
+    .footer-info-panel.active .footer-back-btn {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        margin-left: 0;
+        margin-right: 0;
+        margin-bottom: 1rem;
+        border-radius: 0;
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .footer-back-btn:hover {
@@ -1178,7 +1200,10 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     margin-bottom: 2rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
     color: var(--white);
+    flex: 1;
 }
 
 .footer-info-content h2 {
