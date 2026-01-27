@@ -1170,18 +1170,12 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     flex-shrink: 0;
 }
 
-/* Sur mobile, bouton retour fixe en haut */
+/* Sur mobile, empêcher le scroll du site quand le footer panel est ouvert */
 @media (max-width: 768px) {
-    .footer-info-panel.active .footer-back-btn {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        margin-left: 0;
-        margin-right: 0;
-        margin-bottom: 1rem;
-        border-radius: 0;
+    body.footer-open {
+        overflow: hidden;
+        position: fixed;
         width: 100%;
-        justify-content: center;
     }
 }
 
@@ -1762,8 +1756,8 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     }
     
     .hero-background video {
-        object-fit: contain;
-        object-position: center 70%;
+        object-fit: cover;
+        object-position: center;
     }
     
     .about-section,

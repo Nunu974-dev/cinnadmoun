@@ -260,7 +260,7 @@ const productPrices = {
 // Frais de livraison par zone
 const deliveryFees = {
     'sud': 0,
-    'ouest': 3,
+    'ouest': 5,
     'nord': 7,
     'est': 5
 };
@@ -962,7 +962,7 @@ const footerInfoData = {
                 <div class="info-card">
                     <h4>Zone Ouest</h4>
                     <p>Saint-Paul, Saint-Leu, Le Port</p>
-                    <p style="color: var(--secondary-color); font-weight: 600; margin-top: 0.5rem;">+ 3€ de supplément</p>
+                    <p style="color: var(--secondary-color); font-weight: 600; margin-top: 0.5rem;">+ 5€ de supplément</p>
                 </div>
                 <div class="info-card">
                     <h4>Zone Nord</h4>
@@ -1066,7 +1066,7 @@ const footerInfoData = {
             <p>Non, nous livrons uniquement certains jours de la semaine selon votre zone (Sud : Mardi & Vendredi, Ouest & Nord : Jeudi). Commandez au moins 48h à l'avance.</p>
             
             <h4>Combien de temps se conservent les cinnamon rolls ?</h4>
-            <p>Nos produits se conservent 2-3 jours à température ambiante dans leur emballage, ou 5-7 jours au réfrigérateur.</p>
+            <p>Nos produits se conservent 12 heures à température ambiante dans leur emballage, ou 3-5 jours au réfrigérateur. Conseil : Réchauffez au micro-ondes pour retrouver toute leur saveur.</p>
             
             <h4>Faites-vous des commandes personnalisées ?</h4>
             <p>Oui ! Contactez-nous pour des créations sur-mesure (événements, entreprises, etc.)</p>
@@ -1131,6 +1131,11 @@ document.querySelectorAll('[data-info]').forEach(link => {
             footerMain.classList.add('slide-out');
             footerInfoPanel.classList.add('active');
             
+            // Empêcher le scroll du site sur mobile
+            if (window.innerWidth <= 768) {
+                document.body.classList.add('footer-open');
+            }
+            
             // Scroll vers le haut du panel sur mobile
             setTimeout(() => {
                 footerInfoPanel.scrollTop = 0;
@@ -1143,6 +1148,7 @@ document.querySelectorAll('[data-info]').forEach(link => {
 function closeFooterInfo() {
     footerMain.classList.remove('slide-out');
     footerInfoPanel.classList.remove('active');
+    document.body.classList.remove('footer-open');
 }
 
 // Fermer avec la touche Échap
