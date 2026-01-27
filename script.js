@@ -261,7 +261,7 @@ const productPrices = {
 const deliveryFees = {
     'sud': 0,
     'ouest': 3,
-    'nord': 5,
+    'nord': 7,
     'est': 5
 };
 
@@ -967,12 +967,12 @@ const footerInfoData = {
                 <div class="info-card">
                     <h4>Zone Nord</h4>
                     <p>Saint-Denis, Sainte-Marie, Sainte-Suzanne</p>
-                    <p style="color: var(--secondary-color); font-weight: 600; margin-top: 0.5rem;">+ 5€ de supplément</p>
+                    <p style="color: var(--secondary-color); font-weight: 600; margin-top: 0.5rem;">+ 7€ de supplément</p>
                 </div>
-                <div class="info-card">
-                    <h4>Zone Est</h4>
+                <div class="info-card" style="opacity: 0.6;">
+                    <h4>Zone Est ⏳</h4>
                     <p>Saint-Benoît, Saint-André, Bras-Panon</p>
-                    <p style="color: var(--secondary-color); font-weight: 600; margin-top: 0.5rem;">+ 5€ de supplément</p>
+                    <p style="color: #999; font-weight: 600; margin-top: 0.5rem;">Prochainement disponible</p>
                 </div>
             </div>
             <p><strong>Important :</strong> Commande minimum de 25€ requise pour toutes les livraisons.</p>
@@ -987,8 +987,8 @@ const footerInfoData = {
             <ul>
                 <li><strong>Saint-Pierre / Le Tampon / Saint-Joseph :</strong> Livraison GRATUITE ✨</li>
                 <li><strong>Zone Ouest</strong> (Saint-Paul, Saint-Leu, Le Port) : +3€</li>
-                <li><strong>Zone Nord</strong> (Saint-Denis, Sainte-Marie, Sainte-Suzanne) : +5€</li>
-                <li><strong>Zone Est</strong> (Saint-Benoît, Saint-André, Bras-Panon) : +5€</li>
+                <li><strong>Zone Nord</strong> (Saint-Denis, Sainte-Marie, Sainte-Suzanne) : +7€</li>
+                <li style="color: #999; text-decoration: line-through;"><strong>Zone Est</strong> (Saint-Benoît, Saint-André, Bras-Panon) : Prochainement disponible ⏳</li>
             </ul>
             <p>Les frais de livraison sont calculés selon votre adresse et ajoutés au montant de votre commande.</p>
         `
@@ -996,15 +996,27 @@ const footerInfoData = {
     'delais': {
         title: 'Délais de Livraison',
         content: `
-            <h3>⏰ Quand recevoir votre commande ?</h3>
-            <p><strong style="color: var(--secondary-color); font-size: 1.1rem;">⚠️ Commandez 48h à l'avance</strong></p>
-            <ul>
-                <li>Délai minimum de 48h requis pour toute commande</li>
-                <li>Livraison du mardi au samedi entre 8h et 18h</li>
-                <li>Livraison le dimanche entre 8h et 13h (sur demande)</li>
-                <li>Créneaux horaires précis communiqués lors de la confirmation</li>
-            </ul>
-            <p><strong>Important :</strong> Nos cinnamon rolls sont préparés le jour même de la livraison pour garantir une fraîcheur optimale.</p>
+            <h3>⏰ Jours de Livraison par Zone</h3>
+            <p><strong style="color: var(--secondary-color); font-size: 1.1rem;">⚠️ Livraison selon des jours spécifiques</strong></p>
+            <div class="info-grid" style="margin: 1.5rem 0;">
+                <div class="info-card">
+                    <h4>🌴 Zone Sud</h4>
+                    <p style="color: var(--secondary-color); font-weight: 600; font-size: 1.1rem;">Mardi & Vendredi</p>
+                    <p style="font-size: 0.9rem; color: #666;">Saint-Pierre, Le Tampon, Saint-Joseph</p>
+                </div>
+                <div class="info-card">
+                    <h4>🌅 Zone Ouest</h4>
+                    <p style="color: var(--secondary-color); font-weight: 600; font-size: 1.1rem;">Jeudi</p>
+                    <p style="font-size: 0.9rem; color: #666;">Saint-Paul, Saint-Leu, Le Port</p>
+                </div>
+                <div class="info-card">
+                    <h4>🏛️ Zone Nord</h4>
+                    <p style="color: var(--secondary-color); font-weight: 600; font-size: 1.1rem;">Jeudi</p>
+                    <p style="font-size: 0.9rem; color: #666;">Saint-Denis, Sainte-Marie, Sainte-Suzanne</p>
+                </div>
+            </div>
+            <p><strong>Important :</strong> Commandez au moins 48h à l'avance pour le jour de livraison de votre zone. Nos cinnamon rolls sont préparés le jour même de la livraison pour garantir une fraîcheur optimale.</p>
+            <p><strong>Exemple :</strong> Pour une livraison le mardi dans le Sud, commandez avant le dimanche.</p>
         `
     },
     'paiement': {
@@ -1051,7 +1063,7 @@ const footerInfoData = {
         content: `
             <h3>❓ FAQ</h3>
             <h4>Puis-je commander pour le jour même ?</h4>
-            <p>Non, nous demandons un minimum de 48h pour préparer vos cinnamon rolls frais.</p>
+            <p>Non, nous livrons uniquement certains jours de la semaine selon votre zone (Sud : Mardi & Vendredi, Ouest & Nord : Jeudi). Commandez au moins 48h à l'avance.</p>
             
             <h4>Combien de temps se conservent les cinnamon rolls ?</h4>
             <p>Nos produits se conservent 2-3 jours à température ambiante dans leur emballage, ou 5-7 jours au réfrigérateur.</p>
@@ -1082,7 +1094,7 @@ const footerInfoData = {
         content: `
             <h3>📋 CGV</h3>
             <h4>Article 1 - Commandes</h4>
-            <p>Toute commande doit être passée 48h minimum avant la date de retrait/livraison souhaitée.</p>
+            <p>Les livraisons s'effectuent selon des jours spécifiques par zone : Sud (Mardi & Vendredi), Ouest (Jeudi), Nord (Jeudi). Toute commande doit être passée au moins 48h avant le jour de livraison souhaité.</p>
             
             <h4>Article 2 - Prix</h4>
             <p>Les prix sont indiqués en euros TTC. Ils peuvent être modifiés à tout moment sans préavis.</p>

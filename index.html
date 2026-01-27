@@ -235,6 +235,12 @@
                 <span class="section-subtitle">Passez Commande</span>
                 <h2 class="section-title">Réservez Vos Créations</h2>
                 <p class="section-description">Complétez le formulaire ci-dessous. Nous vous contacterons rapidement pour confirmer votre commande.</p>
+                <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-left: 4px solid var(--secondary-color); padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="color: var(--secondary-color); font-weight: 600; font-size: 1.1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        Commande minimum de 25€ requise pour toute livraison
+                    </p>
+                </div>
             </div>
             <div class="order-form-container">
                 <form id="orderForm" class="order-form">
@@ -510,21 +516,15 @@
                                 <option value="">Choisissez votre point de retrait</option>
                                 <optgroup label="Zone Sud - GRATUIT ✨">
                                     <option value="Saint-Pierre - Canabady Centre Commercial" data-zone="sud" data-city="Saint-Pierre">Saint-Pierre - Canabady Centre Commercial</option>
-                                    <option value="Le Tampon - Centre" data-zone="sud" data-city="Le Tampon">Le Tampon - Centre</option>
-                                    <option value="Le Tampon - La Châtoire" data-zone="sud" data-city="Le Tampon">Le Tampon - La Châtoire</option>
                                 </optgroup>
                                 <optgroup label="Zone Ouest - +3€">
-                                    <option value="Saint-Leu - Portail Centre Commercial" data-zone="ouest" data-city="Saint-Leu">Saint-Leu - Portail Centre Commercial</option>
-                                    <option value="Saint-Paul - Savannah Centre Commercial" data-zone="ouest" data-city="Saint-Paul">Saint-Paul - Savannah Centre Commercial</option>
-                                    <option value="Le Port - Centre Commercial" data-zone="ouest" data-city="Le Port">Le Port - Centre Commercial</option>
+                                    <option value="Le Port - Centre Commercial Sacré Coeur" data-zone="ouest" data-city="Le Port">Le Port - Centre Commercial Sacré Coeur</option>
+                                    <option value="Saint-Leu - Centre Commercial Le Portail" data-zone="ouest" data-city="Saint-Leu">Saint-Leu - Centre Commercial Le Portail</option>
                                 </optgroup>
-                                <optgroup label="Zone Nord - +5€">
+                                <optgroup label="Zone Nord - +7€">
                                     <option value="Sainte-Clotilde - Centre Commercial" data-zone="nord" data-city="Sainte-Clotilde">Sainte-Clotilde - Centre Commercial</option>
-                                    <option value="Sainte-Marie - Centre Commercial" data-zone="nord" data-city="Sainte-Marie">Sainte-Marie - Centre Commercial</option>
-                                    <option value="Sainte-Suzanne - Centre Commercial" data-zone="nord" data-city="Sainte-Suzanne">Sainte-Suzanne - Centre Commercial</option>
                                 </optgroup>
-                                <optgroup label="Zone Est - +5€">
-                                    <option value="Saint-Benoît - Centre Commercial" data-zone="est" data-city="Saint-Benoît">Saint-Benoît - Centre Commercial</option>
+                                <optgroup label="Zone Est - Prochainement disponible ⏳">
                                 </optgroup>
                             </select>
                         </div>
@@ -536,7 +536,7 @@
                         <div class="form-group">
                             <label for="deliveryDate">Date de retrait souhaitée *</label>
                             <input type="date" id="deliveryDate" name="deliveryDate" required>
-                            <small style="color: var(--secondary-color);">⚠️ Commande minimum 48h à l'avance</small>
+                            <small style="color: var(--secondary-color);">⚠️ Jours de livraison : <strong>Sud (Mar-Ven)</strong> | <strong>Nord (Jeu)</strong> | <strong>Ouest (Jeu)</strong></small>
                         </div>
                         <div class="form-group">
                             <label for="message">Remarques ou demandes spéciales</label>
@@ -657,7 +657,7 @@
                 </div>
 
                 <div class="footer-column">
-                    <h3 class="footer-title">Aide</h3>
+                    <h3 class="footer-title">Contact</h3>
                     <ul class="footer-links">
                         <li><a href="#" data-info="faq">FAQ</a></li>
                         <li><a href="#contact">Nous contacter</a></li>
