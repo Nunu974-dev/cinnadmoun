@@ -254,7 +254,7 @@ const productPrices = {
     'chocolat-box4': 22.00,
     'bueno-piece': 5.50,
     'bueno-box4': 22.00,
-    'box-decouverte': 20.00,
+    'box-decouverte': 21.00,
     'tiramisu-oreo': 10.00,
     'tiramisu-speculoos': 10.00
 };
