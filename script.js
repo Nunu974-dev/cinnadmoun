@@ -487,19 +487,111 @@ deliveryDateInput.min = minDate.toISOString().split('T')[0];
 // ===========================
 const stripe = Stripe(STRIPE_CONFIG.publicKey);
 
-document.getElementById('stripePaymentBtn').addEventListener('click', async function() {
-    // Valider le formulaire avant de continuer
+// ===========================
+// Validation formulaire avec messages clairs
+// ===========================
+function validateOrderForm() {
+    const fields = [
+        {
+            id: 'firstName',
+            label: 'Prénom',
+            check: v => v.trim() !== ''
+        },
+        {
+            id: 'lastName',
+            label: 'Nom',
+            check: v => v.trim() !== ''
+        },
+        {
+            id: 'email',
+            label: 'Email',
+            check: v => v.trim() !== '',
+            extra: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? null : 'Email invalide (ex: prenom@exemple.re)'
+        },
+        {
+            id: 'phone',
+            label: 'Numéro de téléphone',
+            check: v => v.trim() !== ''
+        },
+        {
+            id: 'pickupPoint',
+            label: 'Point de retrait (Centre Commercial)',
+            check: v => v !== ''
+        },
+        {
+            id: 'deliveryDate',
+            label: 'Date de retrait souhaitée',
+            check: v => v !== ''
+        }
+    ];
+
+    clearFormErrors();
+    const errors = [];
+
+    fields.forEach(field => {
+        const el = document.getElementById(field.id);
+        const val = el ? el.value : '';
+
+        if (!field.check(val)) {
+            errors.push(`${field.label} est obligatoire`);
+            if (el) el.classList.add('field-error');
+        } else {
+            if (field.extra) {
+                const extraMsg = field.extra(val);
+                if (extraMsg) {
+                    errors.push(extraMsg);
+                    if (el) el.classList.add('field-error');
+                }
+            }
+        }
+    });
+
+    return errors;
+}
+
+function clearFormErrors() {
+    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+    const existing = document.getElementById('formErrorBanner');
+    if (existing) existing.remove();
+}
+
+function showFormErrors(errors) {
+    clearFormErrors();
+    const banner = document.createElement('div');
+    banner.id = 'formErrorBanner';
+    banner.className = 'form-error-banner';
+    banner.innerHTML =
+        '<strong>⚠️ Votre commande ne peut pas être validée :</strong>' +
+        '<ul>' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
     const form = document.getElementById('orderForm');
-    if (!form.checkValidity()) {
-        form.reportValidity();
+    form.insertBefore(banner, form.firstChild);
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Effacer les erreurs dès que le client corrige un champ
+document.addEventListener('DOMContentLoaded', () => {
+    ['firstName', 'lastName', 'email', 'phone', 'pickupPoint', 'deliveryDate'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => el.classList.remove('field-error'));
+            el.addEventListener('change', () => el.classList.remove('field-error'));
+        }
+    });
+});
+
+document.getElementById('stripePaymentBtn').addEventListener('click', async function() {
+    // Valider tous les champs avec messages explicites
+    const errors = validateOrderForm();
+    if (errors.length > 0) {
+        showFormErrors(errors);
         return;
     }
-    
+
     // Collecter les données du formulaire
     const formData = collectFormData();
-    
+
     if (!formData.isValid) {
-        alert(formData.error);
+        showFormErrors([formData.error]);
         return;
     }
     
