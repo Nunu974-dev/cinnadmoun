@@ -595,6 +595,10 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         return;
     }
     
+    // Effacer un éventuel bandeau d'erreur précédent
+    const prevError = document.getElementById('paymentErrorBanner');
+    if (prevError) prevError.remove();
+
     // Sauvegarder les données de commande dans sessionStorage pour la page de retour
     sessionStorage.setItem('orderData', JSON.stringify(formData));
     
@@ -653,7 +657,10 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || 'Erreur lors de la création de la session de paiement');
+            const errorMsg = errorData.details
+                ? `${errorData.error} : ${errorData.details}`
+                : (errorData.error || 'Erreur lors de la création de la session de paiement');
+            throw new Error(errorMsg);
         }
 
         const { sessionId } = await response.json();
@@ -670,16 +677,24 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         
     } catch (error) {
         console.error('❌ Erreur paiement Stripe:', error);
-        
+
         // Réactiver le bouton
         btn.disabled = false;
         btn.innerHTML = originalText;
-        
-        alert(
-            '❌ Erreur de paiement\n\n' +
-            error.message + '\n\n' +
-            'Veuillez réessayer ou contactez-nous si le problème persiste.'
-        );
+
+        // Afficher le bandeau d'erreur au-dessus du bouton de paiement
+        let paymentErrorBanner = document.getElementById('paymentErrorBanner');
+        if (!paymentErrorBanner) {
+            paymentErrorBanner = document.createElement('div');
+            paymentErrorBanner.id = 'paymentErrorBanner';
+            paymentErrorBanner.className = 'form-error-banner';
+            btn.parentNode.insertBefore(paymentErrorBanner, btn);
+        }
+        paymentErrorBanner.innerHTML =
+            '<strong>❌ Votre paiement n\'a pas pu être traité</strong>' +
+            '<p style="margin: 6px 0 0;">' + error.message + '</p>' +
+            '<p style="margin: 6px 0 0; font-size: 0.88em;">Veuillez réessayer ou contactez-nous si le problème persiste.</p>';
+        paymentErrorBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 });
 

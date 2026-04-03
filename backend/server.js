@@ -375,7 +375,7 @@ app.post('/create-checkout-session', async (req, res) => {
                         product_data: {
                             name: `Commande Cinnad'moun - Acompte 20%`,
                             description: `${orderDetails.productSummary || 'Cinnamon rolls artisanaux'}`,
-                            images: ['https://via.placeholder.com/300x300.png?text=Cinnadmoun'], // Remplacer par votre logo
+                            images: ['https://cinnadmoun.re/img/Logo.png'],
                         },
                         unit_amount: amount, // En centimes
                     },
