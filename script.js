@@ -480,7 +480,11 @@ const today = new Date();
 const minDate = new Date(today);
 minDate.setDate(today.getDate() + 2); // Minimum 2 days in advance
 
-deliveryDateInput.min = minDate.toISOString().split('T')[0];
+// Utiliser la date locale (pas UTC) pour éviter le décalage horaire (UTC+4 Réunion)
+const minYear = minDate.getFullYear();
+const minMonth = String(minDate.getMonth() + 1).padStart(2, '0');
+const minDay = String(minDate.getDate()).padStart(2, '0');
+deliveryDateInput.min = `${minYear}-${minMonth}-${minDay}`;
 
 // ===========================
 // Stripe Payment Integration
@@ -521,7 +525,14 @@ function validateOrderForm() {
         {
             id: 'deliveryDate',
             label: 'Date de retrait souhaitée',
-            check: v => v !== ''
+            check: v => v !== '',
+            extra: v => {
+                const selected = new Date(v + 'T00:00:00'); // forcer heure locale
+                const minAllowed = new Date();
+                minAllowed.setHours(0, 0, 0, 0);
+                minAllowed.setDate(minAllowed.getDate() + 2);
+                return selected >= minAllowed ? null : 'La date de retrait doit être au minimum dans 48h (J+2)';
+            }
         }
     ];
 
