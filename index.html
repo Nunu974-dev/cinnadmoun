@@ -595,23 +595,21 @@
 
                     <!-- Point de Retrait -->
                     <div class="form-section">
-                        <h3 class="form-section-title">Point de Retrait</h3>
-                        <p style="color: var(--text-light); margin-bottom: 1.5rem;">📍 Sélectionnez le centre commercial où vous souhaitez récupérer votre commande</p>
+                        <h3 class="form-section-title">Point de Rendez-vous</h3>
+                        <p style="color: var(--text-light); margin-bottom: 1rem;">📍 Choisissez votre point de rendez-vous parmi les zones disponibles</p>
+                        <div style="background: #fff9e6; border-left: 4px solid var(--secondary-color); padding: 1rem 1.25rem; border-radius: 4px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+                            ⛽ En raison du prix de l'essence, nous ne pouvons pas livrer plus loin pour le moment. Nous ne voulons pas vous faire payer 30€ de livraison — livraison <strong>gratuite à Saint-Pierre</strong> et <strong>7€ dans l'Ouest</strong>.
+                        </div>
                         <div class="form-group">
-                            <label for="pickupPoint">Centre Commercial *</label>
+                            <label for="pickupPoint">Point de Rendez-vous *</label>
                             <select id="pickupPoint" name="pickupPoint" required>
-                                <option value="">Choisissez votre point de retrait</option>
-                                <optgroup label="Zone Sud - GRATUIT ✨">
+                                <option value="">Choisissez votre point de rendez-vous</option>
+                                <optgroup label="Zone Sud — GRATUIT ✨">
                                     <option value="Saint-Pierre - Canabady Centre Commercial" data-zone="sud" data-city="Saint-Pierre">Saint-Pierre - Canabady Centre Commercial</option>
                                 </optgroup>
-                                <optgroup label="Zone Ouest - +5€">
-                                    <option value="Le Port - Centre Commercial Sacré Coeur" data-zone="ouest" data-city="Le Port">Le Port - Centre Commercial Sacré Coeur</option>
-                                    <option value="Saint-Leu - Centre Commercial Le Portail" data-zone="ouest" data-city="Saint-Leu">Saint-Leu - Centre Commercial Le Portail</option>
-                                </optgroup>
-                                <optgroup label="Zone Nord - +7€">
-                                    <option value="Sainte-Clotilde - Centre Commercial" data-zone="nord" data-city="Sainte-Clotilde">Sainte-Clotilde - Centre Commercial</option>
-                                </optgroup>
-                                <optgroup label="Zone Est - Prochainement disponible ⏳">
+                                <optgroup label="Zone Ouest — +7€">
+                                    <option value="Corail Hélicoptère" data-zone="ouest" data-city="Saint-Paul">Corail Hélicoptère</option>
+                                    <option value="McDonald's L'Éperon" data-zone="ouest" data-city="Saint-Paul">McDonald's L'Éperon</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -623,7 +621,7 @@
                         <div class="form-group">
                             <label for="deliveryDate">Date de retrait souhaitée *</label>
                             <input type="date" id="deliveryDate" name="deliveryDate" required>
-                            <small style="color: var(--secondary-color);">⚠️ Jours de livraison : <strong>Sud (Mar-Ven)</strong> | <strong>Nord (Jeu)</strong> | <strong>Ouest (Jeu)</strong></small>
+                            <small style="color: var(--secondary-color);">⚠️ Jours de livraison : <strong>Sud (Mar &amp; Ven)</strong> | <strong>Ouest (Jeu)</strong></small>
                         </div>
                         <div class="form-group">
                             <label for="message">Remarques ou demandes spéciales</label>
