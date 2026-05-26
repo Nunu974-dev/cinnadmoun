@@ -859,7 +859,7 @@
                     </svg>
                     <div>
                         <div style="color:white;font-weight:800;font-size:16px;line-height:1.2;">Nos dernières actus</div>
-                        <div style="color:rgba(255,255,255,0.8);font-size:12px;">Cinnad'moun Saint-Pierre 🍕</div>
+                        <div style="color:rgba(255,255,255,0.8);font-size:12px;">Cinnad'moun Saint-Pierre 🥐</div>
                     </div>
                 </div>
                 <button onclick="closeFbPopup()" aria-label="Fermer" style="
@@ -870,23 +870,12 @@
                 " onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
             </div>
             <!-- Embed Facebook Page -->
-            <div style="position:relative;overflow:hidden;line-height:0;background:#f0f2f5;min-height:200px;">
-                <!-- Fallback si l'iframe est bloqué (Firefox / Safari strict) -->
-                <div id="fbFallback" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px 20px;background:#f0f2f5;text-align:center;">
-                    <svg width="48" height="48" viewBox="0 0 32 32" fill="#1877F2"><path d="M32 16C32 7.163 24.837 0 16 0S0 7.163 0 16c0 7.986 5.851 14.604 13.5 15.806V20.625H9.438V16H13.5v-3.525c0-4.01 2.389-6.225 6.044-6.225 1.75 0 3.581.313 3.581.313v3.938h-2.018c-1.988 0-2.607 1.233-2.607 2.498V16h4.438l-.709 4.625H18.5v11.181C26.149 30.604 32 23.986 32 16z"/></svg>
-                    <div style="font-size:15px;font-weight:700;color:#1c1e21;">Nos dernières actualités</div>
-                    <div style="font-size:13px;color:#65676b;line-height:1.5;">Retrouvez nos cinnamon rolls,<br>nos offres et nos nouveautés<br>directement sur Facebook !</div>
-                    <a href="https://www.facebook.com/cinnadmoun" target="_blank" rel="noopener noreferrer" style="background:#1877F2;color:white;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;">
-                        <svg width="16" height="16" viewBox="0 0 32 32" fill="white"><path d="M32 16C32 7.163 24.837 0 16 0S0 7.163 0 16c0 7.986 5.851 14.604 13.5 15.806V20.625H9.438V16H13.5v-3.525c0-4.01 2.389-6.225 6.044-6.225 1.75 0 3.581.313 3.581.313v3.938h-2.018c-1.988 0-2.607 1.233-2.607 2.498V16h4.438l-.709 4.625H18.5v11.181C26.149 30.604 32 23.986 32 16z"/></svg>
-                        Voir notre page
-                    </a>
-                </div>
+            <div style="overflow:hidden;line-height:0;background:#f0f2f5;">
                 <iframe
-                    id="fbPageIframe"
                     src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcinnadmoun&tabs=timeline&width=380&height=420&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
                     width="380"
                     height="420"
-                    style="border:none;overflow:hidden;display:block;max-width:100%;position:relative;z-index:1;opacity:0;transition:opacity 0.4s;"
+                    style="border:none;overflow:hidden;display:block;max-width:100%;"
                     scrolling="yes"
                     frameborder="0"
                     allowfullscreen="true"
@@ -915,15 +904,6 @@
         </div>
     </div>
     <script>
-        // Détecte si l'iframe Facebook a chargé (postMessage de Facebook)
-        window.addEventListener('message', function(e) {
-            if (e.origin === 'https://www.facebook.com') {
-                var iframe = document.getElementById('fbPageIframe');
-                var fallback = document.getElementById('fbFallback');
-                if (iframe) iframe.style.opacity = '1';
-                if (fallback) fallback.style.display = 'none';
-            }
-        });
         function closeFbPopup() {
             const overlay = document.getElementById('fbNewsPopupOverlay');
             overlay.style.opacity = '0';
