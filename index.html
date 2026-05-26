@@ -840,105 +840,90 @@
         </div>
     </div>
 
-    <!-- Bouton flottant Facebook -->
-    <button id="fbPopupBtn" onclick="openFbPopup()" aria-label="Nos actualités Facebook" style="
-        position: fixed;
-        bottom: 28px;
-        right: 28px;
-        z-index: 9000;
-        background: #1877F2;
-        color: #fff;
-        border: none;
-        border-radius: 50px;
-        padding: 13px 22px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        box-shadow: 0 4px 18px rgba(24,119,242,0.45);
-        transition: transform 0.2s, box-shadow 0.2s;
-    " onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        Nos actualités
-    </button>
-
-    <!-- Popup Facebook -->
-    <div id="fbPopupOverlay" onclick="closeFbPopup()" style="
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        z-index: 9100;
-        justify-content: center;
-        align-items: center;
+    <!-- POPUP DERNIÈRES ACTUS FACEBOOK -->
+    <div id="fbNewsPopupOverlay" aria-hidden="true" role="dialog" aria-label="Dernières actualités Facebook" style="
+        display:none; position:fixed; inset:0; z-index:99999;
+        background:rgba(0,0,0,0.6); backdrop-filter:blur(5px);
+        align-items:center; justify-content:center; padding:16px;
     ">
-        <div onclick="event.stopPropagation()" style="
-            background: #fff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            width: min(500px, 95vw);
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
+        <div style="
+            background:#fff; border-radius:20px; padding:0; max-width:380px; width:100%;
+            box-shadow:0 24px 70px rgba(0,0,0,0.45); overflow:hidden;
+            animation:popupSlideIn 0.4s cubic-bezier(.34,1.56,.64,1);
         ">
-            <!-- Header popup -->
-            <div style="background: #1877F2; color:#fff; padding: 14px 20px; display:flex; align-items:center; justify-content:space-between;">
-                <div style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:1rem;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                    Cinnad'moun — Dernières actualités
+            <!-- Header Facebook -->
+            <div style="background:linear-gradient(135deg,#1877F2,#0d5abf);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M32 16C32 7.163 24.837 0 16 0S0 7.163 0 16c0 7.986 5.851 14.604 13.5 15.806V20.625H9.438V16H13.5v-3.525c0-4.01 2.389-6.225 6.044-6.225 1.75 0 3.581.313 3.581.313v3.938h-2.018c-1.988 0-2.607 1.233-2.607 2.498V16h4.438l-.709 4.625H18.5v11.181C26.149 30.604 32 23.986 32 16z"/>
+                    </svg>
+                    <div>
+                        <div style="color:white;font-weight:800;font-size:16px;line-height:1.2;">Nos dernières actus</div>
+                        <div style="color:rgba(255,255,255,0.8);font-size:12px;">Cinnad'moun Saint-Pierre 🍕</div>
+                    </div>
                 </div>
-                <button onclick="closeFbPopup()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;line-height:1;" aria-label="Fermer">&times;</button>
+                <button onclick="closeFbPopup()" aria-label="Fermer" style="
+                    background:rgba(255,255,255,0.2); border:none; border-radius:50%;
+                    width:32px; height:32px; cursor:pointer; display:flex; align-items:center;
+                    justify-content:center; color:white; font-size:18px; line-height:1;
+                    transition:background 0.2s; flex-shrink:0;
+                " onmouseover="this.style.background='rgba(255,255,255,0.35)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
             </div>
-            <!-- Facebook Page iframe -->
-            <div id="fbPageContainer" style="overflow:auto; flex:1; display:flex; justify-content:center; padding: 10px 0;">
+            <!-- Embed Facebook Page -->
+            <div style="overflow:hidden;line-height:0;background:#f0f2f5;">
                 <iframe
-                    src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcinnadmoun&tabs=timeline&width=460&height=600&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
-                    width="460"
-                    height="600"
-                    style="border:none;overflow:hidden;width:100%;max-width:460px"
-                    scrolling="no"
+                    src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcinnadmoun&tabs=timeline&width=380&height=420&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+                    width="380"
+                    height="420"
+                    style="border:none;overflow:hidden;display:block;max-width:100%;"
+                    scrolling="yes"
                     frameborder="0"
                     allowfullscreen="true"
                     allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-                    title="Page Facebook Cinnad'moun">
+                    title="Fil d'actualités Facebook Cinnad'moun"
+                    loading="lazy">
                 </iframe>
             </div>
-            <!-- Lien direct -->
-            <div style="padding: 12px 20px; border-top: 1px solid #eee; text-align:center;">
-                <a href="https://www.facebook.com/cinnadmoun" target="_blank" rel="noopener noreferrer" style="color:#1877F2; font-size:0.9rem; font-weight:600; text-decoration:none;">
-                    Voir la page Facebook complète →
+            <!-- Footer -->
+            <div style="padding:14px 20px;display:flex;gap:10px;align-items:center;background:#fff;border-top:1px solid #e4e6ea;">
+                <a href="https://www.facebook.com/cinnadmoun" target="_blank" rel="noopener noreferrer" style="
+                    flex:1; background:linear-gradient(135deg,#1877F2,#0d5abf); color:white;
+                    text-decoration:none; padding:11px 16px; border-radius:10px;
+                    font-size:14px; font-weight:700; text-align:center;
+                    transition:opacity 0.2s;
+                " onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    <svg width="16" height="16" viewBox="0 0 32 32" fill="white" style="vertical-align:middle;margin-right:6px;margin-bottom:2px;"><path d="M32 16C32 7.163 24.837 0 16 0S0 7.163 0 16c0 7.986 5.851 14.604 13.5 15.806V20.625H9.438V16H13.5v-3.525c0-4.01 2.389-6.225 6.044-6.225 1.75 0 3.581.313 3.581.313v3.938h-2.018c-1.988 0-2.607 1.233-2.607 2.498V16h4.438l-.709 4.625H18.5v11.181C26.149 30.604 32 23.986 32 16z"/></svg>
+                    Voir notre page Facebook
                 </a>
+                <button onclick="closeFbPopup()" style="
+                    background:none; border:1px solid #e4e6ea; color:#65676b;
+                    font-size:13px; cursor:pointer; padding:10px 14px; border-radius:10px;
+                    transition:background 0.2s; white-space:nowrap;
+                " onmouseover="this.style.background='#f0f2f5'" onmouseout="this.style.background='none'">Fermer</button>
             </div>
         </div>
     </div>
-
     <script>
-        var fbSdkLoaded = false;
-        function openFbPopup() {
-            var overlay = document.getElementById('fbPopupOverlay');
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            if (!fbSdkLoaded) {
-                fbSdkLoaded = true;
-                (function(d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0];
-                    if (d.getElementById(id)) return;
-                    js = d.createElement(s); js.id = id;
-                    js.src = 'https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v19.0';
-                    js.async = true; js.defer = true; js.crossOrigin = 'anonymous';
-                    fjs.parentNode.insertBefore(js, fjs);
-                }(document, 'script', 'facebook-jssdk'));
-            } else if (window.FB) {
-                window.FB.XFBML.parse(document.getElementById('fbPageContainer'));
-            }
-        }
         function closeFbPopup() {
-            document.getElementById('fbPopupOverlay').style.display = 'none';
-            document.body.style.overflow = '';
+            const overlay = document.getElementById('fbNewsPopupOverlay');
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.3s';
+            setTimeout(() => { overlay.style.display = 'none'; overlay.setAttribute('aria-hidden','true'); }, 300);
         }
+        // Afficher une seule fois par session
+        (function() {
+            if (!sessionStorage.getItem('fbPopupShown')) {
+                setTimeout(function() {
+                    const overlay = document.getElementById('fbNewsPopupOverlay');
+                    overlay.style.display = 'flex';
+                    overlay.removeAttribute('aria-hidden');
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay) closeFbPopup();
+                    });
+                    sessionStorage.setItem('fbPopupShown', '1');
+                }, 1500);
+            }
+        })();
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeFbPopup();
         });
