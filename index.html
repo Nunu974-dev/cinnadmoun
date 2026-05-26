@@ -840,6 +840,113 @@
         </div>
     </div>
 
+    <!-- Bouton flottant Facebook -->
+    <button id="fbPopupBtn" onclick="openFbPopup()" aria-label="Nos actualités Facebook" style="
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 9000;
+        background: #1877F2;
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 13px 22px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 18px rgba(24,119,242,0.45);
+        transition: transform 0.2s, box-shadow 0.2s;
+    " onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Nos actualités
+    </button>
+
+    <!-- Popup Facebook -->
+    <div id="fbPopupOverlay" onclick="closeFbPopup()" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 9100;
+        justify-content: center;
+        align-items: center;
+    ">
+        <div onclick="event.stopPropagation()" style="
+            background: #fff;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            width: min(500px, 95vw);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        ">
+            <!-- Header popup -->
+            <div style="background: #1877F2; color:#fff; padding: 14px 20px; display:flex; align-items:center; justify-content:space-between;">
+                <div style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Cinnad'moun — Dernières actualités
+                </div>
+                <button onclick="closeFbPopup()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;line-height:1;" aria-label="Fermer">&times;</button>
+            </div>
+            <!-- Facebook Page Plugin -->
+            <div id="fbPageContainer" style="overflow:auto; flex:1; display:flex; justify-content:center; padding: 10px 0;">
+                <div id="fb-root"></div>
+                <div class="fb-page"
+                    data-href="https://www.facebook.com/cinnadmoun"
+                    data-tabs="timeline"
+                    data-width="460"
+                    data-height="600"
+                    data-small-header="true"
+                    data-adapt-container-width="true"
+                    data-hide-cover="false"
+                    data-show-facepile="false">
+                    <blockquote cite="https://www.facebook.com/cinnadmoun" class="fb-xfbml-parse-ignore">
+                        <a href="https://www.facebook.com/cinnadmoun">Cinnad'moun</a>
+                    </blockquote>
+                </div>
+            </div>
+            <!-- Lien direct -->
+            <div style="padding: 12px 20px; border-top: 1px solid #eee; text-align:center;">
+                <a href="https://www.facebook.com/cinnadmoun" target="_blank" rel="noopener noreferrer" style="color:#1877F2; font-size:0.9rem; font-weight:600; text-decoration:none;">
+                    Voir la page Facebook complète →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var fbSdkLoaded = false;
+        function openFbPopup() {
+            var overlay = document.getElementById('fbPopupOverlay');
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            if (!fbSdkLoaded) {
+                fbSdkLoaded = true;
+                (function(d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = 'https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v19.0';
+                    js.async = true; js.defer = true; js.crossOrigin = 'anonymous';
+                    fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));
+            } else if (window.FB) {
+                window.FB.XFBML.parse(document.getElementById('fbPageContainer'));
+            }
+        }
+        function closeFbPopup() {
+            document.getElementById('fbPopupOverlay').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeFbPopup();
+        });
+    </script>
+
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
     <script src="config.js"></script>
