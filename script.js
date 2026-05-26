@@ -262,7 +262,8 @@ const productPrices = {
 // Frais de livraison par zone
 const deliveryFees = {
     'sud': 0,
-    'ouest': 7
+    'ouest': 7,
+    'st-leu': 5
 };
 
 document.addEventListener('DOMContentLoaded', () => {
