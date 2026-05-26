@@ -32,6 +32,8 @@ jobs:
         put -O . script.js;
         put -O . styles.css;
         put -O . config.js;
+        put -O . livraison.html;
+        put -O . success.html;
         mirror -R --only-newer --exclude .git/ --exclude .github/ --exclude backend/ --exclude node_modules/ --exclude .gitignore --exclude README* --exclude GUIDE* --exclude STRIPE* --exclude Procfile --exclude railway.json --exclude .DS_Store img/ img/;
         bye
         "
