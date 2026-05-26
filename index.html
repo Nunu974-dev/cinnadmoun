@@ -892,22 +892,19 @@
                 </div>
                 <button onclick="closeFbPopup()" style="background:none;border:none;color:#fff;font-size:1.5rem;cursor:pointer;line-height:1;" aria-label="Fermer">&times;</button>
             </div>
-            <!-- Facebook Page Plugin -->
+            <!-- Facebook Page iframe -->
             <div id="fbPageContainer" style="overflow:auto; flex:1; display:flex; justify-content:center; padding: 10px 0;">
-                <div id="fb-root"></div>
-                <div class="fb-page"
-                    data-href="https://www.facebook.com/cinnadmoun"
-                    data-tabs="timeline"
-                    data-width="460"
-                    data-height="600"
-                    data-small-header="true"
-                    data-adapt-container-width="true"
-                    data-hide-cover="false"
-                    data-show-facepile="false">
-                    <blockquote cite="https://www.facebook.com/cinnadmoun" class="fb-xfbml-parse-ignore">
-                        <a href="https://www.facebook.com/cinnadmoun">Cinnad'moun</a>
-                    </blockquote>
-                </div>
+                <iframe
+                    src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcinnadmoun&tabs=timeline&width=460&height=600&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false"
+                    width="460"
+                    height="600"
+                    style="border:none;overflow:hidden;width:100%;max-width:460px"
+                    scrolling="no"
+                    frameborder="0"
+                    allowfullscreen="true"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    title="Page Facebook Cinnad'moun">
+                </iframe>
             </div>
             <!-- Lien direct -->
             <div style="padding: 12px 20px; border-top: 1px solid #eee; text-align:center;">
