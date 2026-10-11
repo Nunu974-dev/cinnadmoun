@@ -22,9 +22,17 @@ $meta     = $session['metadata'] ?? [];
 $email    = $session['customer_details']['email'] ?? ($session['customer_email'] ?? '');
 $deposit  = ($session['amount_total'] ?? 0) / 100;
 
-$compact  = unpack_meta('ord', $meta);
-$order    = $compact ? expand_order($compact) : [];
-$ci       = unpack_meta('cust', $meta) ?: [];
+$order = []; $ci = []; $source = 'aucune donnée';
+$stored = !empty($meta['order_id']) ? order_load($meta['order_id']) : null;
+if ($stored && !empty($stored['orderDetails']['products'])) {
+    $order = $stored['orderDetails']; $ci = $stored['customerInfo'] ?? []; $source = 'fichier ' . $meta['order_id'];
+} else {
+    $compact = unpack_meta('ord', $meta);
+    $order = $compact ? expand_order($compact) : [];
+    $ci = unpack_meta('cust', $meta) ?: [];
+    $source = 'métadonnées Stripe' . ($compact ? '' : ' (ILLISIBLES)');
+}
+app_log('WEBHOOK détail commande via ' . $source . ' : ' . count($order['products'] ?? []) . ' ligne(s)');
 
 // Valeurs de secours depuis les clés "à plat" si le détail est manquant
 if (empty($order['total'])) {
@@ -37,11 +45,12 @@ if (empty($order['total'])) {
 $ci += ['phone' => $meta['phone'] ?? '', 'pickupPoint' => $meta['pickupPoint'] ?? '', 'zone' => $meta['zone'] ?? '', 'deliveryDate' => $meta['deliveryDate'] ?? ''];
 
 $name = trim(($ci['firstName'] ?? '') . ' ' . ($ci['lastName'] ?? '')) ?: ($meta['customerName'] ?? 'Client');
-$d = ['customerName' => $name, 'customerEmail' => $email, 'customerInfo' => $ci, 'order' => $order, 'deposit' => $deposit, 'sessionId' => $session['id']];
+$d = ['customerName' => $name, 'customerEmail' => $email, 'customerInfo' => $ci, 'order' => $order, 'deposit' => $deposit, 'sessionId' => $session['id'], 'source' => $source];
 
 // On répond toujours 200 à Stripe (sinon il renvoie l'événement et les mails partent en double)
-if ($email) send_mail($email, "✅ Confirmation de votre commande Cinnad'moun", customer_email_html($d));
-send_mail(cfg()['merchant_email'], '🔔 Nouvelle commande - ' . $name, merchant_email_html($d));
+if ($email) send_mail($email, "✅ Commande confirmée" . (!empty($ci['deliveryDate']) ? ' pour le ' . fr_date($ci['deliveryDate']) : '') . " - Cinnad'moun", customer_email_html($d));
+$subjDate = !empty($ci['deliveryDate']) ? fr_date($ci['deliveryDate']) : 'date non précisée';
+send_mail(cfg()['merchant_email'], '🔔 Nouvelle commande pour ' . $subjDate . ' · ' . $name, merchant_email_html($d));
 
 } catch (Throwable $e) {
     app_log('WEBHOOK ERREUR ' . get_class($e) . ' : ' . $e->getMessage() . ' (' . basename($e->getFile()) . ':' . $e->getLine() . ')');

@@ -37,6 +37,10 @@ $meta = array_merge(
         'productSummary'=> mb_substr((string)($order['productSummary'] ?? ''), 0, 450),
     ]
 );
+// Copie complète de la commande sur le serveur (le webhook la relit via order_id)
+$orderId = order_save(['customerInfo' => $cust, 'orderDetails' => $order, 'created' => date('c')]);
+if ($orderId) $meta['order_id'] = $orderId; else app_log('order_save impossible (droits d\'écriture sur api/orders ?)');
+
 if (count($meta) > 45) json_out(400, ['error' => 'Commande trop volumineuse', 'details' => 'Réduisez le message ou le nombre de lignes.']);
 
 try {
