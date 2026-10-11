@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinnad'moun - Cinnamon Rolls Artisanaux de La Réunion</title>
-    <link rel="stylesheet" href="styles.css?v=1.1.0">
+    <link rel="stylesheet" href="styles.css?v=1.2.1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
                     <a href="#nouveaux-produits">Nouveautés</a>
                     <a href="#produits">Nos Créations</a>
                     <a href="#commander">Commander</a>
+                    <a href="#professionnels">Pro</a>
                     <a href="livraison.html">Livraison</a>
                     <a href="#contact">Contact</a>
                 </div>
@@ -48,7 +49,7 @@
             <div class="hero-badge">Artisan Pâtissier</div>
             <h1 class="hero-title">L'Art du Cinnamon Roll</h1>
             <p class="hero-subtitle">Des créations artisanales inspirées de La Réunion</p>
-            <a href="#commander" class="btn btn-primary">Commander Maintenant</a>
+            <a href="#produits" class="btn btn-primary">Découvrir nos créations</a>
         </div>
         <div class="scroll-indicator">
             <span></span>
@@ -119,7 +120,7 @@
                                 <span class="price-label">À partir de</span>
                                 <span class="price-value">10,00€</span>
                             </div>
-                            <a href="#commander" class="btn btn-secondary">Commander</a>
+                            <button type="button" class="btn btn-secondary add-to-cart" data-product="tiramisu-oreo">Ajouter au panier <span class="cart-qty" hidden></span></button>
                         </div>
                     </div>
                 </div>
@@ -142,7 +143,7 @@
                                 <span class="price-label">À partir de</span>
                                 <span class="price-value">10,00€</span>
                             </div>
-                            <a href="#commander" class="btn btn-secondary">Commander</a>
+                            <button type="button" class="btn btn-secondary add-to-cart" data-product="tiramisu-speculoos">Ajouter au panier <span class="cart-qty" hidden></span></button>
                         </div>
                     </div>
                 </div>
@@ -156,6 +157,7 @@
             <div class="section-header">
                 <span class="section-subtitle">Nos Créations</span>
                 <h2 class="section-title">Une Palette de Saveurs</h2>
+                <p class="section-description">Cliquez sur un prix pour ajouter la création à votre panier.</p>
             </div>
             <div class="products-grid">
                 <!-- Produit 1 -->
@@ -167,14 +169,18 @@
                         <h3 class="product-name">Le Classique</h3>
                         <p class="product-description">Moelleux et doux à la cannelle, sucre roux et glaçage au cream cheese. L'essence même de la perfection.</p>
                         <div class="product-pricing">
-                            <div class="price-option">
+                            <button type="button" class="price-option add-to-cart" data-product="classique-piece" aria-label="Ajouter au panier : Le Classique Pièce">
                                 <span class="price-label">Pièce</span>
                                 <span class="price-value">4,50€</span>
-                            </div>
-                            <div class="price-option">
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
+                            <button type="button" class="price-option add-to-cart" data-product="classique-box4" aria-label="Ajouter au panier : Le Classique Box de 4">
                                 <span class="price-label">Box de 4</span>
                                 <span class="price-value">17,00€</span>
-                            </div>
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -189,14 +195,18 @@
                         <h3 class="product-name">Pomme</h3>
                         <p class="product-description">Une explosion de saveurs avec ces pommes caramélisées. Un goût unique et réconfortant.</p>
                         <div class="product-pricing">
-                            <div class="price-option">
+                            <button type="button" class="price-option add-to-cart" data-product="pomme-piece" aria-label="Ajouter au panier : Pomme Pièce">
                                 <span class="price-label">Pièce</span>
                                 <span class="price-value">5,00€</span>
-                            </div>
-                            <div class="price-option">
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
+                            <button type="button" class="price-option add-to-cart" data-product="pomme-box4" aria-label="Ajouter au panier : Pomme Box de 4">
                                 <span class="price-label">Box de 4</span>
                                 <span class="price-value">18,00€</span>
-                            </div>
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -211,14 +221,18 @@
                         <h3 class="product-name">Cacahuète</h3>
                         <p class="product-description">Une touche gourmande avec notre créme Dakatine, pour les amateurs de douceur intense.</p>
                         <div class="product-pricing">
-                            <div class="price-option">
+                            <button type="button" class="price-option add-to-cart" data-product="cacahuete-piece" aria-label="Ajouter au panier : Cacahuète Pièce">
                                 <span class="price-label">Pièce</span>
                                 <span class="price-value">5,50€</span>
-                            </div>
-                            <div class="price-option">
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
+                            <button type="button" class="price-option add-to-cart" data-product="cacahuete-box4" aria-label="Ajouter au panier : Cacahuète Box de 4">
                                 <span class="price-label">Box de 4</span>
                                 <span class="price-value">20,00€</span>
-                            </div>
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -232,14 +246,18 @@
                         <h3 class="product-name">Chocolat</h3>
                         <p class="product-description">Pour les amateurs de chocolat : chocolat noir et pralin pour le croquant, une création intense.</p>
                         <div class="product-pricing">
-                            <div class="price-option">
+                            <button type="button" class="price-option add-to-cart" data-product="chocolat-piece" aria-label="Ajouter au panier : Chocolat Pièce">
                                 <span class="price-label">Pièce</span>
                                 <span class="price-value">5,50€</span>
-                            </div>
-                            <div class="price-option">
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
+                            <button type="button" class="price-option add-to-cart" data-product="chocolat-box4" aria-label="Ajouter au panier : Chocolat Box de 4">
                                 <span class="price-label">Box de 4</span>
                                 <span class="price-value">20,00€</span>
-                            </div>
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -254,14 +272,18 @@
                         <h3 class="product-name">Bueno</h3>
                         <p class="product-description">Sublimé par une créme bueno, un mariage exceptionnel de saveurs.</p>
                         <div class="product-pricing">
-                            <div class="price-option">
+                            <button type="button" class="price-option add-to-cart" data-product="bueno-piece" aria-label="Ajouter au panier : Bueno Pièce">
                                 <span class="price-label">Pièce</span>
                                 <span class="price-value">5,50€</span>
-                            </div>
-                            <div class="price-option">
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
+                            <button type="button" class="price-option add-to-cart" data-product="bueno-box4" aria-label="Ajouter au panier : Bueno Box de 4">
                                 <span class="price-label">Box de 4</span>
                                 <span class="price-value">20,00€</span>
-                            </div>
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -277,10 +299,12 @@
                         <h3 class="product-name">Box Découverte</h3>
                         <p class="product-description">Une sélection de 4 cinnamon rolls aux saveurs variées, parfait pour découvrir notre gamme complète.</p>
                         <div class="product-pricing">
-                            <div class="price-option special">
+                            <button type="button" class="price-option special add-to-cart" data-product="box-decouverte" aria-label="Ajouter au panier : Box Découverte Box de 4 saveurs">
                                 <span class="price-label">Box de 4 saveurs</span>
                                 <span class="price-value">21,00€</span>
-                            </div>
+                                <span class="add-icon" aria-hidden="true">+</span>
+                                <span class="cart-qty" hidden></span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -293,8 +317,8 @@
         <div class="container">
             <div class="section-header">
                 <span class="section-subtitle">Passez Commande</span>
-                <h2 class="section-title">Réservez Vos Créations</h2>
-                <p class="section-description">Complétez le formulaire ci-dessous. Nous vous contacterons rapidement pour confirmer votre commande.</p>
+                <h2 class="section-title">Votre Panier</h2>
+                <p class="section-description">Vérifiez votre panier, puis complétez vos informations pour régler l'acompte.</p>
                 <div style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-left: 4px solid var(--secondary-color); padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                     <p style="color: var(--secondary-color); font-weight: 600; font-size: 1.1rem; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 1.5rem;">⚠️</span>
@@ -331,8 +355,16 @@
 
                     <!-- Sélection des Produits -->
                     <div class="form-section">
-                        <h3 class="form-section-title">Votre Commande</h3>
-                        <div class="products-selection">
+                        <h3 class="form-section-title">Votre Panier</h3>
+                        <div id="cartEmpty" class="cart-empty">
+                            Votre panier est vide.<br>
+                            <a href="#produits" class="btn btn-secondary">Choisir mes créations</a>
+                        </div>
+                        <ul id="cartLines" class="cart-lines"></ul>
+                        <div id="cartBoxSlot"></div>
+                        <a href="#produits" id="cartContinue" class="cart-continue" hidden>+ Ajouter d'autres créations</a>
+                        <!-- Contrôles d'origine (conservés cachés : le panier les pilote) -->
+                        <div class="products-selection" hidden aria-hidden="true">
                             
                             <!-- Le Classique -->
                             <div class="accordion-item">
@@ -353,7 +385,7 @@
                                         <div class="option-group">
                                             <label>
                                                 <input type="checkbox" name="classique-box4" value="box4">
-                                                <span>Box de 4 - 18,00€</span>
+                                                <span>Box de 4 - 17,00€</span>
                                             </label>
                                             <input type="number" name="classique-box4-qty" min="0" value="0" class="qty-input">
                                         </div>
@@ -380,7 +412,7 @@
                                         <div class="option-group">
                                             <label>
                                                 <input type="checkbox" name="pomme-box4" value="box4">
-                                                <span>Box de 4 - 20,00€</span>
+                                                <span>Box de 4 - 18,00€</span>
                                             </label>
                                             <input type="number" name="pomme-box4-qty" min="0" value="0" class="qty-input">
                                         </div>
@@ -407,7 +439,7 @@
                                         <div class="option-group">
                                             <label>
                                                 <input type="checkbox" name="cacahuete-box4" value="box4">
-                                                <span>Box de 4 - 22,00€</span>
+                                                <span>Box de 4 - 20,00€</span>
                                             </label>
                                             <input type="number" name="cacahuete-box4-qty" min="0" value="0" class="qty-input">
                                         </div>
@@ -434,7 +466,7 @@
                                         <div class="option-group">
                                             <label>
                                                 <input type="checkbox" name="chocolat-box4" value="box4">
-                                                <span>Box de 4 - 22,00€</span>
+                                                <span>Box de 4 - 20,00€</span>
                                             </label>
                                             <input type="number" name="chocolat-box4-qty" min="0" value="0" class="qty-input">
                                         </div>
@@ -461,7 +493,7 @@
                                         <div class="option-group">
                                             <label>
                                                 <input type="checkbox" name="bueno-box4" value="box4">
-                                                <span>Box de 4 - 22,00€</span>
+                                                <span>Box de 4 - 20,00€</span>
                                             </label>
                                             <input type="number" name="bueno-box4-qty" min="0" value="0" class="qty-input">
                                         </div>
@@ -642,6 +674,22 @@
                     </div>
                     <p class="form-note">* Champs obligatoires. Le paiement se fait en ligne (acompte 20%) puis le solde à la livraison.</p>
                 </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professionnels Section -->
+    <section id="professionnels" class="pro-section">
+        <div class="container">
+            <div class="pro-card">
+                <span class="section-subtitle">Espace Professionnels</span>
+                <h2 class="section-title">Vous souhaitez vendre nos Cinnad'moun ?</h2>
+                <p class="pro-text">Café, boulangerie, restaurant, épicerie fine, traiteur, comité d'entreprise... Nous proposons un <strong>tarif professionnel</strong> pour les revendeurs et les commandes en quantité.</p>
+                <p class="pro-text">Contactez-nous afin que nous puissions établir ensemble un partenariat adapté à votre activité.</p>
+                <div class="pro-actions">
+                    <a href="mailto:contact@cinnadmoun.re?subject=Demande%20de%20tarif%20professionnel&amp;body=Bonjour%2C%0A%0ANom%20de%20l%E2%80%99%C3%A9tablissement%20%3A%0AActivit%C3%A9%20%3A%0AVille%20%3A%0AT%C3%A9l%C3%A9phone%20%3A%0A%0AJe%20souhaite%20recevoir%20votre%20tarif%20professionnel.%0A" class="btn btn-primary">Demander le tarif pro</a>
+                    <a href="tel:+262692377243" class="btn btn-secondary">Nous appeler</a>
+                </div>
             </div>
         </div>
     </section>
@@ -932,6 +980,11 @@
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
     <script src="config.js"></script>
-    <script src="script.js?v=1.1.1"></script>
+        <a href="#commander" id="floatingCart" class="floating-cart" hidden>
+        🛒 Voir mon panier <span class="floating-cart-info">(<span id="floatingCartCount">0</span>) · <span id="floatingCartTotal">0,00€</span></span>
+    </a>
+    <div id="cartToast" class="cart-toast" role="status" aria-live="polite"></div>
+
+<script src="script.js?v=1.2.0"></script>
 </body>
 </html>

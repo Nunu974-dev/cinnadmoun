@@ -256,15 +256,15 @@ accordionHeaders.forEach(header => {
 // Prix des produits
 const productPrices = {
     'classique-piece': 4.50,
-    'classique-box4': 18.00,
+    'classique-box4': 17.00,
     'pomme-piece': 5.00,
-    'pomme-box4': 20.00,
+    'pomme-box4': 18.00,
     'cacahuete-piece': 5.50,
-    'cacahuete-box4': 22.00,
+    'cacahuete-box4': 20.00,
     'chocolat-piece': 5.50,
-    'chocolat-box4': 22.00,
+    'chocolat-box4': 20.00,
     'bueno-piece': 5.50,
-    'bueno-box4': 22.00,
+    'bueno-box4': 20.00,
     'box-decouverte': 21.00,
     'tiramisu-oreo': 10.00,
     'tiramisu-speculoos': 10.00
@@ -356,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fonction pour calculer et afficher le récapitulatif
 function updateOrderSummary() {
+    renderCart();
     const orderSummary = document.getElementById('orderSummary');
     const summaryContent = document.getElementById('orderSummaryContent');
     const subtotalEl = document.getElementById('subtotal');
@@ -753,9 +754,11 @@ function collectFormData() {
         const quantity = parseInt(qtyInput.value);
         
         if (quantity > 0) {
-            const productName = checkbox.closest('.accordion-item').querySelector('.accordion-title').textContent;
             const optionLabel = checkbox.closest('label').querySelector('span').textContent;
             const checkboxName = checkbox.getAttribute('name');
+            const productName = checkboxName.startsWith('tiramisu')
+                ? optionLabel.split(' - ')[0].trim()
+                : checkbox.closest('.accordion-item').querySelector('.accordion-title').textContent.trim();
             console.log(`🔍 Produit détecté - name: "${checkboxName}", quantity: ${quantity}`);
             const price = productPrices[checkboxName] || 0;
             const lineTotal = price * quantity;
@@ -783,8 +786,20 @@ function collectFormData() {
     if (products.length === 0) {
         return {
             isValid: false,
-            error: 'Veuillez sélectionner au moins un produit.'
+            error: 'Votre panier est vide : ajoutez au moins une création.'
         };
+    }
+
+    const boxLine = products.find(p => p.composition !== undefined || /box.*d[ée]couverte/i.test(p.name));
+    if (boxLine) {
+        const { total: chosen } = updateRemainingSlots();
+        const needed = boxLine.quantity * 4;
+        if (chosen !== needed) {
+            return {
+                isValid: false,
+                error: `Composez votre Box Découverte : ${chosen}/${needed} saveurs choisies.`
+            };
+        }
     }
     
     if (subtotal < 25) {
@@ -1076,3 +1091,136 @@ document.head.appendChild(style);
 // ===========================
 console.log('%c🥐 Bienvenue sur Cinnad\'moun ! 🥐', 'font-size: 20px; font-weight: bold; color: #8B6F47;');
 console.log('%cDes cinnamon rolls artisanaux de La Réunion', 'font-size: 14px; color: #666;');
+
+
+// ===========================
+// Panier : les prix des cartes alimentent les contrôles d'origine du formulaire
+// ===========================
+function cartControls(name) {
+    return {
+        checkbox: document.querySelector(`.products-selection input[type="checkbox"][name="${name}"]`),
+        qty: document.querySelector(`.products-selection input[name="${name}-qty"]`)
+    };
+}
+
+function setCartQty(name, qty) {
+    const { qty: qtyInput } = cartControls(name);
+    if (!qtyInput) return;
+    qtyInput.value = String(Math.max(0, qty));
+    qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function cartLinesData() {
+    const lines = [];
+    document.querySelectorAll('.products-selection input[type="checkbox"]:checked').forEach(cb => {
+        const name = cb.getAttribute('name');
+        const { qty } = cartControls(name);
+        const quantity = parseInt(qty.value) || 0;
+        if (quantity <= 0) return;
+        const label = cb.closest('label').querySelector('span').textContent.split(' - ')[0].trim();
+        const title = name.startsWith('tiramisu')
+            ? label
+            : cb.closest('.accordion-item').querySelector('.accordion-title').textContent.trim();
+        const price = productPrices[name] || 0;
+        lines.push({ name, title, label, quantity, price, total: price * quantity });
+    });
+    return lines;
+}
+
+const euro = n => n.toFixed(2).replace('.', ',') + '€';
+
+const name_is_tiramisu = n => n.startsWith('tiramisu');
+
+function renderCart() {
+    const list = document.getElementById('cartLines');
+    if (!list) return;
+    const lines = cartLinesData();
+    const count = lines.reduce((n, l) => n + l.quantity, 0);
+    const subtotal = lines.reduce((n, l) => n + l.total, 0);
+
+    list.innerHTML = lines.map(l => `
+        <li class="cart-line">
+            <div class="cart-line-info">
+                <strong>${l.title}</strong>
+                <span>${name_is_tiramisu(l.name) ? 'Barquette 750g' : l.label} · ${euro(l.price)}</span>
+            </div>
+            <div class="cart-line-actions">
+                <button type="button" class="cart-step" data-cart="dec" data-product="${l.name}" aria-label="Retirer un">−</button>
+                <span class="cart-line-qty">${l.quantity}</span>
+                <button type="button" class="cart-step" data-cart="inc" data-product="${l.name}" aria-label="Ajouter un">+</button>
+                <strong class="cart-line-total">${euro(l.total)}</strong>
+                <button type="button" class="cart-remove" data-cart="remove" data-product="${l.name}" aria-label="Supprimer">🗑</button>
+            </div>
+        </li>`).join('');
+
+    document.getElementById('cartEmpty').hidden = lines.length > 0;
+    document.getElementById('cartContinue').hidden = lines.length === 0;
+
+    // Pastille de quantité sur les boutons de prix
+    const qtyByProduct = Object.fromEntries(lines.map(l => [l.name, l.quantity]));
+    document.querySelectorAll('.add-to-cart').forEach(btn => {
+        const q = qtyByProduct[btn.dataset.product] || 0;
+        const badge = btn.querySelector('.cart-qty');
+        btn.classList.toggle('in-cart', q > 0);
+        if (badge) { badge.hidden = q === 0; badge.textContent = '×' + q; }
+    });
+
+    // Barre flottante
+    const bar = document.getElementById('floatingCart');
+    document.getElementById('floatingCartCount').textContent = count;
+    document.getElementById('floatingCartTotal').textContent = euro(subtotal);
+    bar.dataset.hasItems = count > 0 ? '1' : '0';
+    updateFloatingCartVisibility();
+}
+
+let orderSectionVisible = false;
+function updateFloatingCartVisibility() {
+    const bar = document.getElementById('floatingCart');
+    if (bar) bar.hidden = bar.dataset.hasItems !== '1' || orderSectionVisible;
+}
+
+let toastTimer;
+function showCartToast(text) {
+    const t = document.getElementById('cartToast');
+    t.textContent = text;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Le configurateur de la Box Découverte s'affiche dans le panier
+    const slot = document.getElementById('cartBoxSlot');
+    if (slot && boxConfigurator) slot.appendChild(boxConfigurator);
+
+    // Clic sur un prix / "Ajouter au panier"
+    document.addEventListener('click', e => {
+        const add = e.target.closest('.add-to-cart');
+        if (add) {
+            const name = add.dataset.product;
+            const { qty } = cartControls(name);
+            setCartQty(name, (parseInt(qty.value) || 0) + 1);
+            const title = add.closest('.product-card, .tiramisu-card')?.querySelector('.product-name, .tiramisu-name')?.textContent || '';
+            showCartToast(`✓ ${title} ajouté au panier`);
+            return;
+        }
+        const act = e.target.closest('[data-cart]');
+        if (act) {
+            const name = act.dataset.product;
+            const { qty } = cartControls(name);
+            const cur = parseInt(qty.value) || 0;
+            setCartQty(name, act.dataset.cart === 'inc' ? cur + 1 : act.dataset.cart === 'dec' ? cur - 1 : 0);
+        }
+    });
+
+    // Masquer la barre flottante quand on est déjà sur la section commande
+    const orderSection = document.getElementById('commander');
+    if (orderSection && 'IntersectionObserver' in window) {
+        new IntersectionObserver(entries => {
+            orderSectionVisible = entries[0].isIntersecting;
+            updateFloatingCartVisibility();
+        }, { threshold: 0.05 }).observe(orderSection);
+    }
+
+    renderCart();
+});
