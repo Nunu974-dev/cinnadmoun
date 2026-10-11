@@ -30,6 +30,9 @@ jobs:
         cd public_html;
         put -O . index.html;
         put -O . script.js;
+        put -O . shop.js;
+        put -O . catalog.js;
+        put -O . commande.html;
         put -O . styles.css;
         put -O . livraison.html;
         put -O . success.html;

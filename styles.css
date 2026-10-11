@@ -2205,3 +2205,9 @@ button.price-option:active { transform: scale(0.98); }
 }
 
 .order-section[hidden] { display: none; }
+
+/* Page commande */
+.checkout-page { padding-top: 7rem; min-height: 70vh; }
+.order-form.cart-is-empty .form-section:not(#cartSection),
+.order-form.cart-is-empty .payment-buttons,
+.order-form.cart-is-empty .form-note { display: none; }

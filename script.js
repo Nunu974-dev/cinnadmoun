@@ -1,3 +1,6 @@
+// Retour de paiement réussi : le panier est vidé tout de suite (avant que la page ne le recharge)
+if (new URLSearchParams(window.location.search).get('payment') === 'success') clearCart();
+
 // ===========================
 // Mobile Menu Toggle
 // ===========================
@@ -252,30 +255,6 @@ accordionHeaders.forEach(header => {
 // ===========================
 // Product Checkbox & Quantity Sync + Order Calculation
 // ===========================
-
-// Prix des produits
-const productPrices = {
-    'classique-piece': 4.50,
-    'classique-box4': 17.00,
-    'pomme-piece': 5.00,
-    'pomme-box4': 18.00,
-    'cacahuete-piece': 5.50,
-    'cacahuete-box4': 20.00,
-    'chocolat-piece': 5.50,
-    'chocolat-box4': 20.00,
-    'bueno-piece': 5.50,
-    'bueno-box4': 20.00,
-    'box-decouverte': 21.00,
-    'tiramisu-oreo': 10.00,
-    'tiramisu-speculoos': 10.00
-};
-
-// Frais de livraison par zone
-const deliveryFees = {
-    'sud': 0,
-    'ouest': 7,
-    'st-leu': 5
-};
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialiser les éléments du configurateur Box Découverte
@@ -1010,8 +989,7 @@ function closeModal() {
     
     // Réinitialiser le formulaire après fermeture
     setTimeout(() => {
-        document.getElementById('orderForm').reset();
-        location.reload(); // Recharger la page pour réinitialiser complètement
+        window.location.href = 'index.html';
     }, 300);
 }
 
@@ -1094,7 +1072,7 @@ console.log('%cDes cinnamon rolls artisanaux de La Réunion', 'font-size: 14px; 
 
 
 // ===========================
-// Panier : les prix des cartes alimentent les contrôles d'origine du formulaire
+// Panier (page commande) : le panier enregistré alimente les contrôles du formulaire
 // ===========================
 function cartControls(name) {
     return {
@@ -1118,31 +1096,35 @@ function cartLinesData() {
         const quantity = parseInt(qty.value) || 0;
         if (quantity <= 0) return;
         const label = cb.closest('label').querySelector('span').textContent.split(' - ')[0].trim();
-        const title = name.startsWith('tiramisu')
+        const isTiramisu = name.startsWith('tiramisu');
+        const title = isTiramisu
             ? label
             : cb.closest('.accordion-item').querySelector('.accordion-title').textContent.trim();
         const price = productPrices[name] || 0;
-        lines.push({ name, title, label, quantity, price, total: price * quantity });
+        lines.push({ name, title, label: isTiramisu ? 'Barquette 750g' : label, quantity, price, total: price * quantity });
     });
     return lines;
 }
 
-const euro = n => n.toFixed(2).replace('.', ',') + '€';
-
-const name_is_tiramisu = n => n.startsWith('tiramisu');
+let hydratingCart = true;
 
 function renderCart() {
     const list = document.getElementById('cartLines');
     if (!list) return;
     const lines = cartLinesData();
-    const count = lines.reduce((n, l) => n + l.quantity, 0);
-    const subtotal = lines.reduce((n, l) => n + l.total, 0);
+
+    // Enregistrer le panier pour la prochaine visite / retour au paiement annulé
+    if (!hydratingCart) {
+        const cart = {};
+        lines.forEach(l => { cart[l.name] = l.quantity; });
+        saveCart(cart);
+    }
 
     list.innerHTML = lines.map(l => `
         <li class="cart-line">
             <div class="cart-line-info">
                 <strong>${l.title}</strong>
-                <span>${name_is_tiramisu(l.name) ? 'Barquette 750g' : l.label} · ${euro(l.price)}</span>
+                <span>${l.label} · ${euro(l.price)}</span>
             </div>
             <div class="cart-line-actions">
                 <button type="button" class="cart-step" data-cart="dec" data-product="${l.name}" aria-label="Retirer un">−</button>
@@ -1153,48 +1135,10 @@ function renderCart() {
             </div>
         </li>`).join('');
 
-    // La section commande n'apparaît que s'il y a quelque chose dans le panier
-    const orderSec = document.getElementById('commander');
-    if (orderSec) orderSec.hidden = lines.length === 0;
-    const navLink = document.querySelector('.nav-links a[data-nav="order"]');
-    if (navLink) {
-        navLink.setAttribute('href', lines.length ? '#commander' : '#produits');
-        navLink.textContent = lines.length ? `Panier (${count})` : 'Commander';
-    }
-
+    // Panier vide : on ne montre que le message, pas le formulaire
     document.getElementById('cartEmpty').hidden = lines.length > 0;
     document.getElementById('cartContinue').hidden = lines.length === 0;
-
-    // Pastille de quantité sur les boutons de prix
-    const qtyByProduct = Object.fromEntries(lines.map(l => [l.name, l.quantity]));
-    document.querySelectorAll('.add-to-cart').forEach(btn => {
-        const q = qtyByProduct[btn.dataset.product] || 0;
-        const badge = btn.querySelector('.cart-qty');
-        btn.classList.toggle('in-cart', q > 0);
-        if (badge) { badge.hidden = q === 0; badge.textContent = '×' + q; }
-    });
-
-    // Barre flottante
-    const bar = document.getElementById('floatingCart');
-    document.getElementById('floatingCartCount').textContent = count;
-    document.getElementById('floatingCartTotal').textContent = euro(subtotal);
-    bar.dataset.hasItems = count > 0 ? '1' : '0';
-    updateFloatingCartVisibility();
-}
-
-let orderSectionVisible = false;
-function updateFloatingCartVisibility() {
-    const bar = document.getElementById('floatingCart');
-    if (bar) bar.hidden = bar.dataset.hasItems !== '1' || orderSectionVisible;
-}
-
-let toastTimer;
-function showCartToast(text) {
-    const t = document.getElementById('cartToast');
-    t.textContent = text;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+    document.getElementById('orderForm').classList.toggle('cart-is-empty', lines.length === 0);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1202,34 +1146,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const slot = document.getElementById('cartBoxSlot');
     if (slot && boxConfigurator) slot.appendChild(boxConfigurator);
 
-    // Clic sur un prix / "Ajouter au panier"
     document.addEventListener('click', e => {
-        const add = e.target.closest('.add-to-cart');
-        if (add) {
-            const name = add.dataset.product;
-            const { qty } = cartControls(name);
-            setCartQty(name, (parseInt(qty.value) || 0) + 1);
-            const title = add.closest('.product-card, .tiramisu-card')?.querySelector('.product-name, .tiramisu-name')?.textContent || '';
-            showCartToast(`✓ ${title} ajouté au panier`);
-            return;
-        }
         const act = e.target.closest('[data-cart]');
-        if (act) {
-            const name = act.dataset.product;
-            const { qty } = cartControls(name);
-            const cur = parseInt(qty.value) || 0;
-            setCartQty(name, act.dataset.cart === 'inc' ? cur + 1 : act.dataset.cart === 'dec' ? cur - 1 : 0);
-        }
+        if (!act) return;
+        const name = act.dataset.product;
+        const { qty } = cartControls(name);
+        const cur = parseInt(qty.value) || 0;
+        setCartQty(name, act.dataset.cart === 'inc' ? cur + 1 : act.dataset.cart === 'dec' ? cur - 1 : 0);
     });
 
-    // Masquer la barre flottante quand on est déjà sur la section commande
-    const orderSection = document.getElementById('commander');
-    if (orderSection && 'IntersectionObserver' in window) {
-        new IntersectionObserver(entries => {
-            orderSectionVisible = entries[0].isIntersecting;
-            updateFloatingCartVisibility();
-        }, { threshold: 0.05 }).observe(orderSection);
-    }
-
+    // Recharger le panier choisi sur l'accueil
+    const saved = loadCart();
+    Object.keys(saved).forEach(name => setCartQty(name, saved[name]));
+    hydratingCart = false;
     renderCart();
 });
