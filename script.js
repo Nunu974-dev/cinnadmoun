@@ -36,14 +36,25 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 });
 
 // ===========================
-// "Réveiller" le backend Render au chargement (évite 1min d'attente)
+// API de paiement (PHP, même domaine que le site : pas de CORS, pas de démarrage à froid)
 // ===========================
-const BACKEND_URL = 'https://cinnadmoun.onrender.com';
+const API_URL = '/api';
 
-fetch(`${BACKEND_URL}/`)
-    .then(res => res.json())
-    .then(data => console.log('✅ Backend prêt:', data.status))
-    .catch(err => console.log('⚠️ Backend en cours de réveil...'));
+// Une coupure réseau ponctuelle ne doit pas faire échouer le paiement : on retente
+async function fetchWithRetry(url, options, attempts = 3) {
+    let lastError;
+    for (let i = 0; i < attempts; i++) {
+        try {
+            const res = await fetch(url, options);
+            if (res.status < 502 || res.status > 504) return res;
+            lastError = new Error(`Serveur indisponible (${res.status})`);
+        } catch (err) {
+            lastError = err;
+        }
+        await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+    }
+    throw lastError;
+}
 
 // ===========================
 // Vérifier le retour de paiement Stripe
@@ -454,7 +465,7 @@ function updateOrderSummary() {
     const total = subtotal + deliveryFee;
     totalAmountEl.textContent = total.toFixed(2) + '€';
     
-    // Calculer l'acompte (30%)
+    // Calculer l'acompte (20%)
     const deposit = total * (STRIPE_CONFIG.depositPercent / 100);
     depositAmountEl.textContent = deposit.toFixed(2) + '€';
     depositBtnAmountEl.textContent = deposit.toFixed(2) + '€';
@@ -631,7 +642,7 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
     try {
         // Créer la session de paiement Stripe
         console.log('⏱️ Envoi requête au backend...');
-        const response = await fetch(`${BACKEND_URL}/create-checkout-session`, {
+        const response = await fetchWithRetry(`${API_URL}/create-checkout-session.php`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -673,11 +684,15 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
             throw new Error(errorMsg);
         }
 
-        const { sessionId } = await response.json();
+        const { sessionId, url } = await response.json();
         console.log(`⏱️ Session ID reçu: ${Date.now() - startTime}ms`);
         
-        // Rediriger vers Stripe Checkout
+        // Rediriger vers Stripe Checkout (URL directe, redirectToCheckout est déprécié)
         console.log('⏱️ Redirection vers Stripe...');
+        if (url) {
+            window.location.href = url;
+            return;
+        }
         const result = await stripe.redirectToCheckout({ sessionId });
         console.log(`⏱️ Total avant redirection: ${Date.now() - startTime}ms`);
         
@@ -687,6 +702,9 @@ document.getElementById('stripePaymentBtn').addEventListener('click', async func
         
     } catch (error) {
         console.error('❌ Erreur paiement Stripe:', error);
+        if (error instanceof TypeError) {
+            error = new Error('Connexion au serveur de paiement impossible. Vérifiez votre connexion internet et réessayez dans quelques secondes.');
+        }
 
         // Réactiver le bouton
         btn.disabled = false;
@@ -828,7 +846,7 @@ function createDetailedEmailBody(data) {
     
     body += `💳 PAIEMENT\n`;
     body += `-----------------------------------\n`;
-    body += `Acompte payé (30%): ${data.deposit.toFixed(2)}€\n`;
+    body += `Acompte payé (20%): ${data.deposit.toFixed(2)}€\n`;
     body += `Solde à la livraison: ${data.balance.toFixed(2)}€\n`;
     body += `Total: ${data.total.toFixed(2)}€\n\n`;
     

@@ -1,5 +1,7 @@
 # Fichiers de configuration sensibles
 config.js
+api/config.php
+.env.ftp
 
 # Backend
 backend/.env
