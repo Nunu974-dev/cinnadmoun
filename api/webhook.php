@@ -5,15 +5,18 @@ $payload = file_get_contents('php://input');
 $sig     = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
 
 if (!stripe_verify_webhook($payload, $sig, cfg()['stripe_webhook_secret'])) {
+    app_log('WEBHOOK signature invalide (le whsec_ de config.php ne correspond pas à ce endpoint ?)');
     http_response_code(400);
     exit('Signature invalide');
 }
 
 $event = json_decode($payload, true);
+app_log('WEBHOOK reçu : ' . ($event['type'] ?? '?') . ' ' . ($event['data']['object']['id'] ?? ''));
 if (($event['type'] ?? '') !== 'checkout.session.completed') {
     json_out(200, ['received' => true]);
 }
 
+try {
 $session  = $event['data']['object'];
 $meta     = $session['metadata'] ?? [];
 $email    = $session['customer_details']['email'] ?? ($session['customer_email'] ?? '');
@@ -40,4 +43,7 @@ $d = ['customerName' => $name, 'customerEmail' => $email, 'customerInfo' => $ci,
 if ($email) send_mail($email, "✅ Confirmation de votre commande Cinnad'moun", customer_email_html($d));
 send_mail(cfg()['merchant_email'], '🔔 Nouvelle commande - ' . $name, merchant_email_html($d));
 
+} catch (Throwable $e) {
+    app_log('WEBHOOK ERREUR ' . get_class($e) . ' : ' . $e->getMessage() . ' (' . basename($e->getFile()) . ':' . $e->getLine() . ')');
+}
 json_out(200, ['received' => true]);

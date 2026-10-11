@@ -24,6 +24,15 @@ const deliveryFees = {
     'st-leu': 5
 };
 
+// Jours de livraison par zone (0 = dimanche ... 6 = samedi) et délai minimal en jours
+const deliveryDays = {
+    'sud': [2, 5],      // mardi, vendredi
+    'ouest': [4],       // jeudi
+    'st-leu': [4]       // jeudi (à confirmer)
+};
+const MIN_LEAD_DAYS = 2;
+const DELIVERY_WEEKS_AHEAD = 6;
+
 // Panier : { 'classique-piece': 2, ... } conservé dans le navigateur entre les pages.
 // Les Box Découverte sont stockées à part, avec la composition de chaque box.
 const CART_KEY = 'cinnadmoun_cart';

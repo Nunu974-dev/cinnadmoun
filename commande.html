@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon panier - Cinnad'moun</title>
     <meta name="robots" content="noindex">
-    <link rel="stylesheet" href="styles.css?v=1.4.0">
+    <link rel="stylesheet" href="styles.css?v=1.5.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -327,30 +327,6 @@
                         </div>
                     </div>
 
-                    <!-- Récapitulatif de Commande -->
-                    <div class="form-section order-summary" id="orderSummary" style="display: none;">
-                        <h3 class="form-section-title">Récapitulatif</h3>
-                        <div id="orderSummaryContent"></div>
-                        <div class="order-totals">
-                            <div class="total-row">
-                                <span>Sous-total produits :</span>
-                                <strong id="subtotal">0,00€</strong>
-                            </div>
-                            <div class="total-row">
-                                <span>Frais de livraison :</span>
-                                <strong id="deliveryFees">À calculer</strong>
-                            </div>
-                            <div class="total-row total-main">
-                                <span>Total :</span>
-                                <strong id="totalAmount">0,00€</strong>
-                            </div>
-                            <div class="deposit-info">
-                                <p>💳 Acompte de 20% requis : <strong id="depositAmount">0,00€</strong></p>
-                                <p class="small-text">Le solde sera à régler à la livraison</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Point de Retrait -->
                     <div class="form-section">
                         <h3 class="form-section-title">Point de Rendez-vous</h3>
@@ -381,8 +357,10 @@
                         <h3 class="form-section-title">Détails de la Commande</h3>
                         <div class="form-group">
                             <label for="deliveryDate">Date de retrait souhaitée *</label>
-                            <input type="date" id="deliveryDate" name="deliveryDate" required>
-                            <small style="color: var(--secondary-color);">⚠️ Jours de livraison : <strong>Sud (Mar &amp; Ven)</strong> | <strong>Ouest (Jeu)</strong></small>
+                            <select id="deliveryDate" name="deliveryDate" required disabled>
+                                <option value="">Choisissez d'abord un point de rendez-vous</option>
+                            </select>
+                            <small id="deliveryDateHint" style="color: var(--secondary-color);">📅 Les dates proposées dépendent du point de rendez-vous choisi.</small>
                         </div>
                         <div class="form-group">
                             <label for="message">Remarques ou demandes spéciales</label>
@@ -390,10 +368,41 @@
                         </div>
                     </div>
 
+                    <!-- Récapitulatif de Commande (affiché une fois le lieu et la date choisis) -->
+                    <div class="form-section order-summary" id="orderSummary" style="display: none;">
+                        <h3 class="form-section-title">Récapitulatif</h3>
+                        <div id="orderSummaryContent"></div>
+                        <div class="order-totals">
+                            <div class="total-row">
+                                <span>Sous-total produits</span>
+                                <strong id="subtotal">0,00€</strong>
+                            </div>
+                            <div class="total-row">
+                                <span>Frais de livraison</span>
+                                <strong id="deliveryFees">À calculer</strong>
+                            </div>
+                            <div class="total-row total-main">
+                                <span>Total de la commande</span>
+                                <strong id="totalAmount">0,00€</strong>
+                            </div>
+                        </div>
+                        <div class="pay-split">
+                            <div class="pay-now">
+                                <span class="pay-split-label">💳 À payer maintenant en ligne<small>Acompte de 20 %</small></span>
+                                <strong id="depositAmount">0,00€</strong>
+                            </div>
+                            <div class="pay-later">
+                                <span class="pay-split-label">💵 Reste à régler le jour du retrait<small>En espèces, directement à la remise de votre commande</small></span>
+                                <strong id="balanceAmount">0,00€</strong>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="payment-buttons">
                         <button type="button" id="stripePaymentBtn" class="btn btn-primary btn-large" style="display: none;">
-                            💳 Payer l'acompte (20%) - <span id="depositBtnAmount">0,00€</span>
+                            💳 Payer l'acompte de <span id="depositBtnAmount">0,00€</span>
                         </button>
+                        <p class="form-note" id="balanceBtnNote" style="display: none;">Il vous restera <strong id="balanceBtnAmount">0,00€</strong> à régler en espèces le jour du retrait.</p>
                         <p class="form-note" id="minimumOrderNote" style="display: none; color: #e74c3c; font-weight: 600;">
                             ⚠️ Commande minimum de 25€ requise
                         </p>
@@ -514,8 +523,8 @@
                         <strong id="modalTotal">0,00€</strong>
                     </div>
                     <div class="modal-deposit-info">
-                        <p>💳 Acompte payé : <strong id="modalDeposit">0,00€</strong></p>
-                        <p class="modal-balance">Solde à régler à la livraison : <strong id="modalBalance">0,00€</strong> (espèces uniquement)</p>
+                        <p>✅ Acompte payé en ligne : <strong id="modalDeposit">0,00€</strong></p>
+                        <p class="modal-balance">💵 Reste à régler le jour du retrait : <strong id="modalBalance">0,00€</strong> (en espèces)</p>
                     </div>
                 </div>
                 
@@ -538,7 +547,7 @@
 
     <script src="https://js.stripe.com/v3/"></script>
     <script src="config.js"></script>
-    <script src="catalog.js?v=1.4.0"></script>
-    <script src="script.js?v=1.4.0"></script>
+    <script src="catalog.js?v=1.5.0"></script>
+    <script src="script.js?v=1.5.0"></script>
 </body>
 </html>

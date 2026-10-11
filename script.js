@@ -317,7 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Mise à jour lors du changement de point de retrait
     const pickupPointSelect = document.getElementById('pickupPoint');
-    pickupPointSelect.addEventListener('change', updateOrderSummary);
+    pickupPointSelect.addEventListener('change', () => { refreshDeliveryDates(); updateOrderSummary(); });
+    document.getElementById('deliveryDate').addEventListener('change', updateOrderSummary);
 });
 
 // Fonction pour calculer et afficher le récapitulatif
@@ -383,10 +384,9 @@ function updateOrderSummary() {
         orderSummary.style.display = 'none';
         stripePaymentBtn.style.display = 'none';
         minimumOrderNote.style.display = 'none';
+        document.getElementById('balanceBtnNote').style.display = 'none';
         return;
     }
-    
-    orderSummary.style.display = 'block';
     
     // Construire le contenu du récapitulatif
     let summaryHTML = '<ul class="order-items-list">';
@@ -432,36 +432,75 @@ function updateOrderSummary() {
     const total = subtotal + deliveryFee;
     totalAmountEl.textContent = total.toFixed(2) + '€';
     
-    // Calculer l'acompte (20%)
+    // Acompte (20%) et reste à régler au retrait
     const deposit = total * (STRIPE_CONFIG.depositPercent / 100);
-    depositAmountEl.textContent = deposit.toFixed(2) + '€';
-    depositBtnAmountEl.textContent = deposit.toFixed(2) + '€';
-    
-    // Vérifier le minimum de commande (25€)
+    const balance = total - deposit;
+    const money = n => n.toFixed(2).replace('.', ',') + '€';
+    depositAmountEl.textContent = money(deposit);
+    depositBtnAmountEl.textContent = money(deposit);
+    document.getElementById('balanceAmount').textContent = money(balance);
+    document.getElementById('balanceBtnAmount').textContent = money(balance);
+
+    // Le récapitulatif et le paiement n'apparaissent qu'une fois le lieu ET la date choisis
+    const dateChosen = document.getElementById('deliveryDate').value !== '';
+    const ready = !!zone && dateChosen;
+    orderSummary.style.display = ready ? 'block' : 'none';
+    const balanceNote = document.getElementById('balanceBtnNote');
+
     if (subtotal < 25) {
         minimumOrderNote.style.display = 'block';
         stripePaymentBtn.style.display = 'none';
+        balanceNote.style.display = 'none';
     } else {
         minimumOrderNote.style.display = 'none';
-        if (zone) {
-            stripePaymentBtn.style.display = 'block';
-        }
+        stripePaymentBtn.style.display = ready ? 'block' : 'none';
+        balanceNote.style.display = ready ? 'block' : 'none';
     }
 }
 
 // ===========================
-// Set Minimum Date for Delivery
+// Dates de retrait : uniquement les jours de livraison du point choisi
 // ===========================
-const deliveryDateInput = document.getElementById('deliveryDate');
-const today = new Date();
-const minDate = new Date(today);
-minDate.setDate(today.getDate() + 2); // Minimum 2 days in advance
+function localISO(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
-// Utiliser la date locale (pas UTC) pour éviter le décalage horaire (UTC+4 Réunion)
-const minYear = minDate.getFullYear();
-const minMonth = String(minDate.getMonth() + 1).padStart(2, '0');
-const minDay = String(minDate.getDate()).padStart(2, '0');
-deliveryDateInput.min = `${minYear}-${minMonth}-${minDay}`;
+function refreshDeliveryDates() {
+    const select = document.getElementById('deliveryDate');
+    const pickup = document.getElementById('pickupPoint');
+    const hint = document.getElementById('deliveryDateHint');
+    const opt = pickup.options[pickup.selectedIndex];
+    const zone = opt ? opt.getAttribute('data-zone') : null;
+    const previous = select.value;
+
+    if (!zone || !deliveryDays[zone]) {
+        select.disabled = true;
+        select.innerHTML = '<option value="">Choisissez d\'abord un point de rendez-vous</option>';
+        hint.textContent = '📅 Les dates proposées dépendent du point de rendez-vous choisi.';
+        return;
+    }
+
+    const days = deliveryDays[zone];
+    const first = new Date();
+    first.setHours(0, 0, 0, 0);
+    first.setDate(first.getDate() + MIN_LEAD_DAYS);
+
+    let html = '<option value="">Choisissez une date</option>';
+    for (let i = 0; i < DELIVERY_WEEKS_AHEAD * 7; i++) {
+        const d = new Date(first);
+        d.setDate(first.getDate() + i);
+        if (!days.includes(d.getDay())) continue;
+        const iso = localISO(d);
+        const label = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        html += `<option value="${iso}">${label.charAt(0).toUpperCase() + label.slice(1)}</option>`;
+    }
+    select.innerHTML = html;
+    select.disabled = false;
+    if (previous && select.querySelector(`option[value="${previous}"]`)) select.value = previous;
+
+    const names = days.map(n => ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'][n]);
+    hint.textContent = `📅 Jours de livraison pour ce point : ${names.join(' et ')}.`;
+}
 
 // ===========================
 // Stripe Payment Integration
@@ -934,7 +973,8 @@ function showModal(orderData) {
                 </div>
                 ${item.composition ? `
                     <div class="modal-item-composition">
-                        <strong>📦 Composition personnalisée :</strong> ${item.composition}
+                        <strong>📦 Composition :</strong>
+                        <ul>${item.composition.split('|').map((b, i) => `<li><strong>Box ${i + 1} :</strong> ${b.trim()}</li>`).join('')}</ul>
                     </div>
                 ` : ''}
             </div>

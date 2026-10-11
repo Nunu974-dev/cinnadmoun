@@ -11,6 +11,14 @@ function cfg(): array {
     return $c;
 }
 
+// Journal des envois (api/logs/, inaccessible depuis le web)
+function app_log(string $msg): void {
+    $dir = __DIR__ . '/logs';
+    if (!is_dir($dir)) { @mkdir($dir, 0755, true); @file_put_contents($dir . '/.htaccess', "Require all denied\n"); }
+    @file_put_contents($dir . '/app.log', '[' . date('Y-m-d H:i:s') . '] ' . $msg . "\n", FILE_APPEND | LOCK_EX);
+    error_log($msg);
+}
+
 function esc($v): string { return htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8'); }
 function eur($n): string { return number_format((float)$n, 2, ',', ' ') . '€'; }
 
@@ -75,13 +83,19 @@ function send_mail(string $to, string $subject, string $html): bool {
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT        => 20,
         CURLOPT_POST           => true,
+        CURLOPT_USERAGENT      => 'cinnadmoun-site/1.0',
         CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . cfg()['resend_api_key'], 'Content-Type: application/json'],
         CURLOPT_POSTFIELDS     => json_encode(['from' => cfg()['from'], 'to' => [$to], 'subject' => $subject, 'html' => $html], JSON_UNESCAPED_UNICODE),
     ]);
     $res  = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err  = curl_error($ch);
     curl_close($ch);
-    if ($code < 200 || $code >= 300) { error_log("Resend $code : $res"); return false; }
+    if ($res === false || $code < 200 || $code >= 300) {
+        app_log("MAIL ECHEC vers $to (HTTP $code) : " . ($res === false ? "cURL: $err" : $res));
+        return false;
+    }
+    app_log("MAIL OK vers $to : $res");
     return true;
 }
 
@@ -185,7 +199,11 @@ function customer_email_html(array $d): string {
     . '<p style="font-size:16px;color:#5D4037;">Bonjour <strong>' . esc($d['customerName']) . '</strong>,</p>'
     . '<p style="font-size:15px;color:#5D4037;line-height:1.6;">Votre acompte de <strong>' . eur($deposit) . '</strong> a bien été reçu : votre commande est confirmée. 🎉</p>'
     . '<h3 style="color:#8B4513;border-bottom:2px solid #D4A574;padding-bottom:8px;">🥐 Votre commande</h3>' . items_html($order)
-    . '<div style="background:#F5F5F5;padding:18px;border-radius:8px;margin:22px 0;">' . recap_html($order, $deposit) . '</div>'
+    . '<div style="background:#F5F5F5;padding:18px;border-radius:8px;margin:22px 0 14px;">' . recap_html($order, $deposit) . '</div>'
+    . '<div style="background:#FFF3E0;border:2px solid #E65100;border-radius:8px;padding:16px;margin-bottom:22px;text-align:center;">'
+    . '<div style="font-size:14px;color:#5D2E00;">Acompte déjà payé en ligne : <strong>' . eur($deposit) . '</strong></div>'
+    . '<div style="font-size:20px;font-weight:bold;color:#B34700;margin-top:6px;">💵 Il vous reste ' . eur(balance_of($order, $deposit)) . ' à régler le jour du retrait</div>'
+    . '<div style="font-size:13px;color:#5D2E00;margin-top:4px;">En espèces, directement lors de la remise de votre commande.</div></div>'
     . '<div style="background:#FFF8E1;border-left:4px solid #D4A574;padding:16px;border-radius:4px;margin-bottom:22px;"><h3 style="color:#8B4513;margin:0 0 10px;font-size:16px;">📍 Retrait</h3><table style="width:100%;border-collapse:collapse;">'
     . info_row('Point de retrait', $ci['pickupPoint'] ?? '') . info_row('Date souhaitée', $ci['deliveryDate'] ?? '') . info_row('Téléphone', $ci['phone'] ?? '') . info_row('Email', $d['customerEmail'])
     . '</table></div>' . $msg

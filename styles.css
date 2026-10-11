@@ -2233,3 +2233,37 @@ button.price-option:active { transform: scale(0.98); }
 .box-modal-counter { text-align: center; margin: 1rem 0; font-weight: 600; color: var(--primary-dark); }
 .box-modal-card .btn-large { width: 100%; }
 .box-modal-card .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Récapitulatif : acompte / reste à régler */
+.pay-split { display: grid; gap: 0.75rem; margin-top: 1.25rem; }
+.pay-now, .pay-later { display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    padding: 1rem 1.25rem; border-radius: 8px; }
+.pay-now { background: #E8F5E9; border: 2px solid #4CAF50; color: #1B5E20; }
+.pay-later { background: #FFF3E0; border: 2px solid #E65100; color: #8A3B00; }
+.pay-split-label { display: flex; flex-direction: column; font-weight: 700; font-size: 1.05rem; }
+.pay-split-label small { font-weight: 400; font-size: 0.85rem; margin-top: 0.2rem; opacity: 0.9; }
+.pay-now strong, .pay-later strong { font-size: 1.5rem; white-space: nowrap; }
+#balanceBtnNote { text-align: center; color: #8A3B00; font-size: 1rem; }
+@media (max-width: 600px) { .pay-now, .pay-later { flex-direction: column; align-items: flex-start; } }
+
+/* Fenêtre de confirmation : contraste renforcé (texte foncé sur fond clair) */
+.modal-content, .modal-content p, .modal-content li, .modal-content span, .modal-content div { color: #2C2C2C; }
+.modal-header h2 { color: #4A3417; }
+.modal-subtitle { color: #4A4A4A; }
+.modal-section h3, .modal-content h3 { color: #4A3417; }
+.modal-order-items { background: #F5F1E8; }
+.modal-item-name { color: #2C2C2C; }
+.modal-item-price { color: #4A3417; }
+.modal-item-details { color: #4A4A4A; }
+.modal-item-composition { background: #FFF3E0; color: #5D2E00; }
+.modal-item-composition, .modal-item-composition * { color: #5D2E00; }
+.modal-item-composition ul { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+.modal-info { background: #F5F1E8; color: #2C2C2C; }
+.modal-total { background: #F5F1E8; }
+.modal-total-row, .modal-total-row span, .modal-total-row strong { color: #2C2C2C; }
+.modal-total-main strong { color: #4A3417; }
+.modal-deposit-info p { color: #2C2C2C; }
+.modal-deposit-info .modal-balance { color: #8A3B00 !important; font-weight: 700; font-size: 1.05rem; }
+.modal-next-steps, .modal-next-steps li { color: #1E2A38; }
+.modal-next-steps h4 { color: #0D47A1; }
+.modal-content .modal-icon-success { color: #fff; }
