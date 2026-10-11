@@ -189,23 +189,10 @@ function updateRemainingSlots() {
 
 // Fonction pour récupérer la composition de la box
 function getBoxComposition() {
-    if (!flavorInputs) {
-        console.log('⚠️ flavorInputs not found');
-        return '';
-    }
-    console.log('🔍 flavorInputs trouvés:', flavorInputs.length);
-    const composition = [];
-    flavorInputs.forEach(input => {
-        const qty = parseInt(input.value) || 0;
-        console.log(`  - ${input.dataset.flavor}: ${qty} (value="${input.value}")`);
-        if (qty > 0) {
-            const flavor = input.dataset.flavor;
-            composition.push(`${flavor} x${qty}`);
-        }
-    });
-    const result = composition.join(', ');
-    console.log('🎨 getBoxComposition() result:', result);
-    return result;
+    // Compositions choisies sur l'accueil : une par box, séparées par " | "
+    const boxes = loadBoxes();
+    if (boxes.length) return boxesToComposition(boxes);
+    return '';
 }
 
 // ===========================
@@ -1088,10 +1075,13 @@ function setCartQty(name, qty) {
     qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+let boxes = [];
+
 function cartLinesData() {
     const lines = [];
     document.querySelectorAll('.products-selection input[type="checkbox"]:checked').forEach(cb => {
         const name = cb.getAttribute('name');
+        if (name === 'box-decouverte') return;   // les box sont listées une par une ci-dessous
         const { qty } = cartControls(name);
         const quantity = parseInt(qty.value) || 0;
         if (quantity <= 0) return;
@@ -1103,10 +1093,23 @@ function cartLinesData() {
         const price = productPrices[name] || 0;
         lines.push({ name, title, label: isTiramisu ? 'Barquette 750g' : label, quantity, price, total: price * quantity });
     });
+    boxes.forEach((box, i) => {
+        const comp = BOX_FLAVORS.filter(f => box[f] > 0).map(f => `${f} ×${box[f]}`).join(', ');
+        lines.push({ name: 'box-decouverte', boxIndex: i, title: `Box Découverte n°${i + 1}`, label: comp, quantity: 1, price: productPrices['box-decouverte'], total: productPrices['box-decouverte'] });
+    });
     return lines;
 }
 
 let hydratingCart = true;
+
+// Aligne les contrôles d'origine du formulaire (quantité + saveurs) sur les box du panier
+function syncBoxInputs() {
+    const totals = {};
+    boxes.forEach(b => BOX_FLAVORS.forEach(f => { totals[f] = (totals[f] || 0) + (parseInt(b[f]) || 0); }));
+    document.querySelectorAll('.box-flavor-qty').forEach(input => { input.value = totals[input.dataset.flavor] || 0; });
+    setCartQty('box-decouverte', boxes.length);
+    updateRemainingSlots();
+}
 
 function renderCart() {
     const list = document.getElementById('cartLines');
@@ -1120,7 +1123,17 @@ function renderCart() {
         saveCart(cart);
     }
 
-    list.innerHTML = lines.map(l => `
+    list.innerHTML = lines.map(l => l.boxIndex !== undefined ? `
+        <li class="cart-line">
+            <div class="cart-line-info">
+                <strong>${l.title}</strong>
+                <span>${l.label}</span>
+            </div>
+            <div class="cart-line-actions">
+                <strong class="cart-line-total">${euro(l.total)}</strong>
+                <button type="button" class="cart-remove" data-box-remove="${l.boxIndex}" aria-label="Supprimer cette box">🗑</button>
+            </div>
+        </li>` : `
         <li class="cart-line">
             <div class="cart-line-info">
                 <strong>${l.title}</strong>
@@ -1142,11 +1155,14 @@ function renderCart() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Le configurateur de la Box Découverte s'affiche dans le panier
-    const slot = document.getElementById('cartBoxSlot');
-    if (slot && boxConfigurator) slot.appendChild(boxConfigurator);
-
     document.addEventListener('click', e => {
+        const rm = e.target.closest('[data-box-remove]');
+        if (rm) {
+            boxes.splice(parseInt(rm.dataset.boxRemove), 1);
+            saveBoxes(boxes);
+            syncBoxInputs();
+            return;
+        }
         const act = e.target.closest('[data-cart]');
         if (!act) return;
         const name = act.dataset.product;
@@ -1157,7 +1173,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Recharger le panier choisi sur l'accueil
     const saved = loadCart();
-    Object.keys(saved).forEach(name => setCartQty(name, saved[name]));
+    boxes = loadBoxes();
+    Object.keys(saved).forEach(name => { if (name !== 'box-decouverte') setCartQty(name, saved[name]); });
+    syncBoxInputs();
     hydratingCart = false;
     renderCart();
 });

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinnad'moun - Cinnamon Rolls Artisanaux de La Réunion</title>
-    <link rel="stylesheet" href="styles.css?v=1.3.0">
+    <link rel="stylesheet" href="styles.css?v=1.4.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -549,12 +549,70 @@
         });
     </script>
 
+    <!-- Composition de la Box Découverte -->
+    <div id="boxModal" class="box-modal" hidden role="dialog" aria-modal="true" aria-labelledby="boxModalTitle">
+        <div class="box-modal-card">
+            <button type="button" class="box-modal-close" id="boxModalClose" aria-label="Fermer">×</button>
+            <h3 id="boxModalTitle">Composez votre Box Découverte</h3>
+            <p class="box-modal-sub">Choisissez <strong>4 cinnamon rolls</strong> parmi nos saveurs (vous pouvez prendre plusieurs fois la même).</p>
+            <div class="box-flavor-list">
+            <div class="box-flavor-row">
+                <img src="img/canelleseul.png" alt="" width="44" height="44">
+                <span class="box-flavor-name">Nature</span>
+                <div class="box-flavor-stepper">
+                    <button type="button" data-flavor-step="-1" data-flavor="Nature" aria-label="Retirer un Nature">−</button>
+                    <span class="box-flavor-count" data-flavor-count="Nature">0</span>
+                    <button type="button" data-flavor-step="1" data-flavor="Nature" aria-label="Ajouter un Nature">+</button>
+                </div>
+            </div>
+            <div class="box-flavor-row">
+                <img src="img/Chocoseul.png" alt="" width="44" height="44">
+                <span class="box-flavor-name">Chocolat</span>
+                <div class="box-flavor-stepper">
+                    <button type="button" data-flavor-step="-1" data-flavor="Chocolat" aria-label="Retirer un Chocolat">−</button>
+                    <span class="box-flavor-count" data-flavor-count="Chocolat">0</span>
+                    <button type="button" data-flavor-step="1" data-flavor="Chocolat" aria-label="Ajouter un Chocolat">+</button>
+                </div>
+            </div>
+            <div class="box-flavor-row">
+                <img src="img/Pommeseul.png" alt="" width="44" height="44">
+                <span class="box-flavor-name">Pomme Cannelle</span>
+                <div class="box-flavor-stepper">
+                    <button type="button" data-flavor-step="-1" data-flavor="Pomme Cannelle" aria-label="Retirer un Pomme Cannelle">−</button>
+                    <span class="box-flavor-count" data-flavor-count="Pomme Cannelle">0</span>
+                    <button type="button" data-flavor-step="1" data-flavor="Pomme Cannelle" aria-label="Ajouter un Pomme Cannelle">+</button>
+                </div>
+            </div>
+            <div class="box-flavor-row">
+                <img src="img/cahueteseul.png" alt="" width="44" height="44">
+                <span class="box-flavor-name">Cacahuète</span>
+                <div class="box-flavor-stepper">
+                    <button type="button" data-flavor-step="-1" data-flavor="Cacahuète" aria-label="Retirer un Cacahuète">−</button>
+                    <span class="box-flavor-count" data-flavor-count="Cacahuète">0</span>
+                    <button type="button" data-flavor-step="1" data-flavor="Cacahuète" aria-label="Ajouter un Cacahuète">+</button>
+                </div>
+            </div>
+            <div class="box-flavor-row">
+                <img src="img/Buenoseul.png" alt="" width="44" height="44">
+                <span class="box-flavor-name">Bueno</span>
+                <div class="box-flavor-stepper">
+                    <button type="button" data-flavor-step="-1" data-flavor="Bueno" aria-label="Retirer un Bueno">−</button>
+                    <span class="box-flavor-count" data-flavor-count="Bueno">0</span>
+                    <button type="button" data-flavor-step="1" data-flavor="Bueno" aria-label="Ajouter un Bueno">+</button>
+                </div>
+            </div>
+            </div>
+            <p class="box-modal-counter"><span id="boxModalCount">0</span> / 4 choisis</p>
+            <button type="button" id="boxModalAdd" class="btn btn-primary btn-large" disabled>Ajouter au panier · 21,00€</button>
+        </div>
+    </div>
+
     <a href="commande.html" id="floatingCart" class="floating-cart" hidden>
         🛒 Voir mon panier <span class="floating-cart-info">(<span id="floatingCartCount">0</span>) · <span id="floatingCartTotal">0,00€</span></span>
     </a>
     <div id="cartToast" class="cart-toast" role="status" aria-live="polite"></div>
 
-    <script src="catalog.js?v=1.3.0"></script>
-    <script src="shop.js?v=1.3.0"></script>
+    <script src="catalog.js?v=1.4.0"></script>
+    <script src="shop.js?v=1.4.0"></script>
 </body>
 </html>

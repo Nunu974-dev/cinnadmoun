@@ -127,8 +127,10 @@ function item_html(array $item): string {
 
     if ($isDisc) {
         $lis = '';
-        foreach (array_filter(array_map('trim', explode(',', $item['composition']))) as $f) $lis .= '<li style="margin:2px 0;">' . esc($f) . '</li>';
-        $detail = '<p style="margin:8px 0 2px;font-size:13px;color:#5D4037;"><strong>Vos saveurs (' . $qty . ' box × 4 rolls) :</strong></p><ul style="margin:0;padding-left:20px;font-size:13px;color:#5D4037;">' . $lis . '</ul>';
+        foreach (array_values(array_filter(array_map('trim', explode('|', $item['composition'])))) as $i => $boxComp) {
+            $lis .= '<li style="margin:3px 0;"><strong>Box ' . ($i + 1) . ' :</strong> ' . esc($boxComp) . '</li>';
+        }
+        $detail = '<p style="margin:8px 0 2px;font-size:13px;color:#5D4037;"><strong>Composition (' . $qty . ' box × 4 rolls) :</strong></p><ul style="margin:0;padding-left:20px;font-size:13px;color:#5D4037;">' . $lis . '</ul>';
     } elseif ($isBox) {
         $detail = '<p style="margin:8px 0 0;font-size:13px;color:#5D4037;">' . $qty . ' box de 4 rolls <strong>' . esc($item['name']) . '</strong> (' . ($qty * 4) . ' rolls au total)</p>';
     } else {

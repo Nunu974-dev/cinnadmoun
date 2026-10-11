@@ -108,8 +108,9 @@ function showCartToast(text) {
 document.addEventListener('click', e => {
     const add = e.target.closest('.add-to-cart');
     if (!add) return;
-    const cart = loadCart();
     const key = add.dataset.product;
+    if (key === 'box-decouverte') { openBoxModal(); return; }   // il faut d'abord choisir les saveurs
+    const cart = loadCart();
     cart[key] = (cart[key] || 0) + 1;
     saveCart(cart);
     renderShopCart();
@@ -120,3 +121,68 @@ document.addEventListener('click', e => {
 // Retour arrière du navigateur : le panier a pu changer sur l'autre page
 window.addEventListener('pageshow', renderShopCart);
 document.addEventListener('DOMContentLoaded', renderShopCart);
+
+
+// ===========================
+// Box Découverte : choix des saveurs avant l'ajout au panier
+// ===========================
+let boxDraft = {};
+const boxModal = document.getElementById('boxModal');
+
+function boxDraftTotal() {
+    return BOX_FLAVORS.reduce((n, f) => n + (boxDraft[f] || 0), 0);
+}
+
+function renderBoxModal() {
+    const total = boxDraftTotal();
+    BOX_FLAVORS.forEach(f => {
+        const el = boxModal.querySelector(`[data-flavor-count="${f}"]`);
+        if (el) el.textContent = boxDraft[f] || 0;
+    });
+    boxModal.querySelectorAll('[data-flavor-step="1"]').forEach(b => { b.disabled = total >= BOX_SIZE; });
+    boxModal.querySelectorAll('[data-flavor-step="-1"]').forEach(b => { b.disabled = !(boxDraft[b.dataset.flavor] > 0); });
+    document.getElementById('boxModalCount').textContent = total;
+    document.getElementById('boxModalAdd').disabled = total !== BOX_SIZE;
+}
+
+function openBoxModal() {
+    if (!boxModal) return;
+    boxDraft = {};
+    renderBoxModal();
+    boxModal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    const first = boxModal.querySelector('[data-flavor-step="1"]');
+    if (first) first.focus();
+}
+
+function closeBoxModal() {
+    if (!boxModal) return;
+    boxModal.hidden = true;
+    document.body.style.overflow = '';
+}
+
+if (boxModal) {
+    boxModal.addEventListener('click', e => {
+        if (e.target === boxModal || e.target.closest('#boxModalClose')) { closeBoxModal(); return; }
+        const step = e.target.closest('[data-flavor-step]');
+        if (step) {
+            const f = step.dataset.flavor;
+            const delta = parseInt(step.dataset.flavorStep);
+            if (delta > 0 && boxDraftTotal() >= BOX_SIZE) return;
+            boxDraft[f] = Math.max(0, (boxDraft[f] || 0) + delta);
+            renderBoxModal();
+            return;
+        }
+        if (e.target.closest('#boxModalAdd') && boxDraftTotal() === BOX_SIZE) {
+            const boxes = loadBoxes();
+            boxes.push(Object.assign({}, boxDraft));
+            saveBoxes(boxes);
+            closeBoxModal();
+            renderShopCart();
+            showCartToast(`✓ Box Découverte n°${boxes.length} ajoutée au panier`);
+        }
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !boxModal.hidden) closeBoxModal();
+    });
+}
