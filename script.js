@@ -1153,6 +1153,15 @@ function renderCart() {
             </div>
         </li>`).join('');
 
+    // La section commande n'apparaît que s'il y a quelque chose dans le panier
+    const orderSec = document.getElementById('commander');
+    if (orderSec) orderSec.hidden = lines.length === 0;
+    const navLink = document.querySelector('.nav-links a[data-nav="order"]');
+    if (navLink) {
+        navLink.setAttribute('href', lines.length ? '#commander' : '#produits');
+        navLink.textContent = lines.length ? `Panier (${count})` : 'Commander';
+    }
+
     document.getElementById('cartEmpty').hidden = lines.length > 0;
     document.getElementById('cartContinue').hidden = lines.length === 0;
 

@@ -2203,3 +2203,5 @@ button.price-option:active { transform: scale(0.98); }
     .pro-card { padding: 2rem 1.25rem; }
     .pro-actions .btn { width: 100%; text-align: center; }
 }
+
+.order-section[hidden] { display: none; }
