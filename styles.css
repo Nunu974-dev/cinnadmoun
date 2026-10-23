@@ -2320,3 +2320,32 @@ button.price-option:active { transform: scale(0.98); }
         background: #2C2C2C;
     }
 }
+
+/* En-tête et menu mobile : noir uni, texte et burger blancs (lisible en mode sombre comme en mode clair) */
+.navbar,
+.navbar.scrolled {
+    background: #000000 !important;
+}
+
+.navbar .menu-toggle {
+    background: transparent !important;
+    color: #FFFFFF !important;
+}
+
+.navbar .menu-toggle span {
+    background-color: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+@media (max-width: 768px) {
+    .navbar .nav-links {
+        background: #000000 !important;
+    }
+
+    .navbar .nav-links a,
+    .navbar .nav-links a:visited,
+    .navbar .nav-links a:active {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    }
+}
