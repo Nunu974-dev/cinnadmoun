@@ -30,7 +30,15 @@ const deliveryDays = {
     'ouest': [4],       // jeudi
     'st-leu': [4]       // jeudi (à confirmer)
 };
-const MIN_LEAD_DAYS = 2;
+const MIN_LEAD_HOURS = 72;
+
+// Premier jour de retrait possible : la journée entière doit se situer au moins 72h après maintenant
+function firstPickupDay() {
+    const d = new Date(Date.now() + MIN_LEAD_HOURS * 3600 * 1000);
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() + 1);
+    return d;
+}
 const DELIVERY_WEEKS_AHEAD = 6;
 
 // Panier : { 'classique-piece': 2, ... } conservé dans le navigateur entre les pages.

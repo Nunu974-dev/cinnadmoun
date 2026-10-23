@@ -481,9 +481,7 @@ function refreshDeliveryDates() {
     }
 
     const days = deliveryDays[zone];
-    const first = new Date();
-    first.setHours(0, 0, 0, 0);
-    first.setDate(first.getDate() + MIN_LEAD_DAYS);
+    const first = firstPickupDay();
 
     let html = '<option value="">Choisissez une date</option>';
     for (let i = 0; i < DELIVERY_WEEKS_AHEAD * 7; i++) {
@@ -544,10 +542,7 @@ function validateOrderForm() {
             check: v => v !== '',
             extra: v => {
                 const selected = new Date(v + 'T00:00:00'); // forcer heure locale
-                const minAllowed = new Date();
-                minAllowed.setHours(0, 0, 0, 0);
-                minAllowed.setDate(minAllowed.getDate() + 2);
-                return selected >= minAllowed ? null : 'La date de retrait doit être au minimum dans 48h (J+2)';
+                return selected >= firstPickupDay() ? null : 'La date de retrait doit être au minimum dans 72h';
             }
         }
     ];
