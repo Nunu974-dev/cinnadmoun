@@ -1821,8 +1821,19 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     }
     
     .hero {
-        height: 80vh;
+        height: 100vh;
+        height: 100svh;
         min-height: 500px;
+    }
+
+    .hero-content {
+        padding: 2rem 1.25rem 7rem;
+    }
+
+    .scroll-bubble {
+        bottom: 1rem;
+        width: calc(100% - 2.5rem);
+        max-width: 320px;
     }
     
     .hero-background video {
@@ -2292,4 +2303,20 @@ button.price-option:active { transform: scale(0.98); }
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+}
+
+/* Menu de navigation : toujours blanc sur fond sombre, même en mode sombre du téléphone */
+.navbar .nav-links a {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF;
+}
+
+.navbar .menu-toggle span {
+    background: #FFFFFF !important;
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        background: #2C2C2C;
+    }
 }
