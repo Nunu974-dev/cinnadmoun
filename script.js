@@ -1214,12 +1214,3 @@ document.addEventListener('DOMContentLoaded', () => {
     hydratingCart = false;
     renderCart();
 });
-
-// Bulle "Commandez plus bas" : disparaît dès qu'on commence à scroller
-(function () {
-    const bubble = document.querySelector('.scroll-bubble');
-    if (!bubble) return;
-    const update = () => bubble.classList.toggle('hidden', window.scrollY > 40);
-    window.addEventListener('scroll', update, { passive: true });
-    update();
-})();
