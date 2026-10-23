@@ -2283,3 +2283,13 @@ button.price-option:active { transform: scale(0.98); }
 #confirmationModal .modal-next-steps li:before { color: #E6C36A; }
 #confirmationModal .modal-footer { border-top-color: #5A4636; }
 #confirmationModal .modal-body { scrollbar-color: #5A4636 #2A1F17; }
+
+.scroll-bubble {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.scroll-bubble.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
